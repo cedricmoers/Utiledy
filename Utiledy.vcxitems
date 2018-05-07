@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{b84c078d-1ca9-435d-b6ba-1b6f26281ebd}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="$(MSBuildThisFileDirectory)readme.txt" />
+    <Text Include="$(MSBuildThisFileDirectory)library.properties" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- <ClInclude Include="$(MSBuildThisFileDirectory)Utiledy.h" /> -->
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\GammaCorrectedBlinker.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\GammaCorrectedFader.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\GammaCorrectedLED.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\GammaCorrectedBlinker.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\GammaCorrectedFader.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\GammaCorrectedLED.cpp" />
+  </ItemGroup>
+</Project>
