@@ -1,7 +1,6 @@
 
 #include <GammaCorrectedLED.h>
 
-
 GammaCorrectedLED led1 = GammaCorrectedLED("LED1", 5, true, 0, 1023);
 GammaCorrectedLED led2 = GammaCorrectedLED("LED2", 4, true, 0, 1023);
 GammaCorrectedLED led3 = GammaCorrectedLED("LED3", 0, true, 0, 1023);
@@ -34,28 +33,10 @@ void setup()
 	led3.enable();
 	led4.enable();
 
-	led1.setUnscaledBrightness(1023);
-	led2.setUnscaledBrightness(512);
-	led3.setUnscaledBrightness(256);
-	led4.setUnscaledBrightness(128);
-
-	led1.update();
-	led2.update();
-	led3.update();
-	led4.update();
-
-	delay(2000);
-
 	led1.setUnscaledBrightness(0);
 	led2.setUnscaledBrightness(0);
 	led3.setUnscaledBrightness(0);
 	led4.setUnscaledBrightness(0);
-
-	led1.update();
-	led2.update();
-	led3.update();
-	led4.update();
-
 }
 
 void loop()
@@ -85,7 +66,7 @@ void processLEDFade(GammaCorrectedLED &led, unsigned long updateInterval, unsign
 			}
 		}
 
-		led.update();
+		analogWrite(led.getPin(), led.update());
 		previousUpdate = now;
 	}
 }

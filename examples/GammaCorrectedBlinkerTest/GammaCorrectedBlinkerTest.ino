@@ -34,7 +34,7 @@ void setup()
 	//led3.enable();
 	//led4.enable();
 
-	led1.setHighBrightness(4095);
+	led1.setHighBrightness(2000);
 	//led2.setHighBrightness(4095);
 	//led3.setHighBrightness(2048);
 	//led4.setHighBrightness(2048);
@@ -44,12 +44,12 @@ void setup()
 	//led3.setLowBrightness(0);
 	//led4.setLowBrightness(1024);
 
-	led1.setHighTime(500);
+	led1.setHighTime(1000);
 	//led2.setHighTime(200);
 	//led3.setHighTime(100);
 	//led4.setHighTime(50);
 
-	led1.setLowTime(500);
+	led1.setLowTime(1000);
 	//led2.setLowTime(800);
 	//led3.setLowTime(100);
 	//led4.setLowTime(150);
@@ -60,9 +60,12 @@ void setup()
 	//led4.setOffset(15000);
 
 	led1.setLowPassFilterEnabled(true);
-	led1.setLowPassFilterSmoothing(0.999);
+	led1.setLowPassFilterSmoothing(0.1);
 
 	led1.start();
+
+	led1.fadeWave(5000, 0);
+
 	//led2.start();
 	//led3.start();
 	//led4.start();
@@ -94,7 +97,7 @@ void loop()
 		led4.stop();
 	}
 
-	led1.update();
+	analogWrite(led1.getPin(), led1.update());
 	//led2.update();
 	//led3.update();
 	//led4.update();

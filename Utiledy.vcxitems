@@ -22,10 +22,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)src\GammaCorrectedBlinker.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\GammaCorrectedFader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\GammaCorrectedLED.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\GammaCorrectedSparkler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\UltiLED.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)src\GammaCorrectedBlinker.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\GammaCorrectedFader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)src\GammaCorrectedLED.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\GammaCorrectedSparkler.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)src\UltiLED.cpp" />
   </ItemGroup>
 </Project>

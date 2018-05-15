@@ -293,12 +293,23 @@ const uint16_t gammaCorrectionLookupTable[] = {
 #define DEBUG_LED //Comment out to disable debug to serial monitor.
 
 #ifdef DEBUG_LED
-#define DEBUG_PRINT_HEADER(...) {							\
-									Serial.print(millis()); \
-									Serial.print("::");		\
-									Serial.print(getID()); \
-									Serial.print("::");		\
-								}
+#define DEBUG_PRINT_HEADER(...)		{									\
+										Serial.print(millis());			\
+										Serial.print("::");				\
+										Serial.print(getID());			\
+										Serial.print("::");				\
+									}
+#define DEBUG_PRINTLN_HEADER(...)	{									\
+										DEBUG_PRINT_HEADER();			\
+										Serial.println(__VA_ARGS__);	\
+									}
+#define DEBUG_PARAMETER(name, value){									\
+										DEBUG_PRINT_HEADER();			\
+										DEBUG_PRINT(name);				\
+										DEBUG_PRINT_F("::");			\
+										DEBUG_PRINTLN(value);			\
+}
+
 #define DEBUG_PRINT(...) Serial.print(__VA_ARGS__);
 #define DEBUG_PRINT_F(...) Serial.print(__VA_ARGS__);
 #define DEBUG_PRINTLN(...) Serial.println(__VA_ARGS__);
@@ -341,17 +352,19 @@ public:
 	void setGammaCorrectionEnabled(bool state);						// Sets the gamma correction to on/off.
 	void setLowPassFilterEnabled(bool state);						// Sets the state of the low pass filter.
 	void setLowPassFilterSmoothing(float smoothing);				// Sets the smoothing factor of the low pass filter. Must be between 0 and 1.
-	void setLowerLimit(BRIGHTNESS_TYPE lowerLimit);					// Sets the lower limit of the MultiLED.
-	void setUpperLimit(BRIGHTNESS_TYPE upperLimit);					// Sets the upper limit of the MultiLED.
-	void setUnscaledBrightness(BRIGHTNESS_TYPE brightness);			// Sets the brightness to a certain value.
+	void setOutputLowerLimit(BRIGHTNESS_TYPE lowerLimit);					// Sets the lower limit of the MultiLED.
+	void setOutputUpperLimit(BRIGHTNESS_TYPE upperLimit);					// Sets the upper limit of the MultiLED.
+	virtual void setUnscaledBrightness(BRIGHTNESS_TYPE brightness);			// Sets the brightness to a certain value.
 
 	// Getters:
 
-	BRIGHTNESS_TYPE getLowerLimit();								// Returns the lower limit.
-	BRIGHTNESS_TYPE getUpperLimit();								// Returns the upper limit.
-	BRIGHTNESS_TYPE getUnscaledBrightness();						// Returns the value of the current brightness.
-	BRIGHTNESS_TYPE getLimitedBrightness();							// Returns the value of the current limited brightness.
-	BRIGHTNESS_TYPE getGammaCorrectedBrightness();					// Returns the value of the current gamma corrected brightness.
+	BRIGHTNESS_TYPE getOutputLowerLimit();								// Returns the lower limit.
+	BRIGHTNESS_TYPE getOutputUpperLimit();								// Returns the upper limit.
+
+	virtual BRIGHTNESS_TYPE getUnscaledBrightness();				// Returns the value of the current brightness.
+	virtual BRIGHTNESS_TYPE getMaxUnscaledBrightness();				// Returns the maximal value to what the unscaled brightness can be set.
+	virtual BRIGHTNESS_TYPE getMinUnscaledBrightness();				// Returns the maximal value to what the unscaled brightness can be set.
+
 	uint8_t			getPin();										// Returns the output pin number.
 	bool			getGammaCorrectionEnabled();					// Returns the state of the gamma correction.
 	bool			getLowPassFilterEnabled();						// Returns the state of the low pass filter.
@@ -368,11 +381,15 @@ public:
 
 	BRIGHTNESS_TYPE update();
 
+	BRIGHTNESS_TYPE update(BRIGHTNESS_TYPE unscaledValue);
+
 	void increaseBrightness(BRIGHTNESS_TYPE amount);				// Increase the current brightness by the given amount.
 	void decreaseBrightness(BRIGHTNESS_TYPE amount);				// Decrease the current brightness by the given amount.
 																	   
 	void enable();													// Enable the LED output.
 	void disable();													// Disable the LED output.
+
+	BRIGHTNESS_TYPE unscaledToFinalBrightness(BRIGHTNESS_TYPE unscaledBrightness);
 
 private:
 

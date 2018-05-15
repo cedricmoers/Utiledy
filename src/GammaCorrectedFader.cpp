@@ -18,6 +18,7 @@ GammaCorrectedFader::GammaCorrectedFader(
 	setContinuouslyFadeWaving(false);
 	setMinToMaxTime(0);
 	setFadeWavesLeft(0);
+	setFadeMode(FADEMODE_IDLE);
 }
 
 
@@ -30,6 +31,20 @@ void GammaCorrectedFader::fadeToValue(uint16_t time, BRIGHTNESS_TYPE brightness)
 	DEBUG_PRINT(time);
 	DEBUG_PRINTLN_F("ms.");
 
+	if (brightness == getUnscaledBrightness()) {
+		DEBUG_PRINT_HEADER();
+		DEBUG_PRINT_F("Brightness is already at that value.");
+
+		setFadeMode(FADEMODE_IDLE);
+		return;
+	}
+	else if (brightness > getUnscaledBrightness()) {
+		setFadeMode(FADEMODE_UP);
+	}
+	else if (brightness < getUnscaledBrightness()) {
+		setFadeMode(FADEMODE_DOWN);
+	}
+
 	setCurrentFadeStartBrightness(getUnscaledBrightness());
 	setCurrentFadeEndBrightness(brightness);
 	setCurrentFadeStartTime(millis());
@@ -38,27 +53,37 @@ void GammaCorrectedFader::fadeToValue(uint16_t time, BRIGHTNESS_TYPE brightness)
 
 void GammaCorrectedFader::fadeToMax(uint16_t time)
 {
-	fadeToValue(time, BRIGHTNESS_TYPE_MAX);
+	fadeToValue(time, getMaxUnscaledBrightness());
 }
 
 void GammaCorrectedFader::fadeToMin(uint16_t time)
 {
-	fadeToValue(time, BRIGHTNESS_TYPE_MIN);
+	fadeToValue(time, getMinUnscaledBrightness());
 }
 
 void GammaCorrectedFader::fadeToggle(uint16_t time)
 {
-	fadeToValue(time, isShining() ? BRIGHTNESS_TYPE_MIN : BRIGHTNESS_TYPE_MAX);
-}
-
-bool GammaCorrectedFader::fadingInProgress() {
-
-	if (getCurrentFadeEndBrightness() != getUnscaledBrightness()){
-		return true;
+	if (getUnscaledBrightness() > getMinUnscaledBrightness()) {
+		fadeToMin(time);
 	}
 	else {
-		return false;
+		fadeToMax(time);
 	}
+}
+
+bool GammaCorrectedFader::isFadingUp()
+{
+	return getFadeMode() == FADEMODE_UP;
+}
+
+bool GammaCorrectedFader::isFadingDown()
+{
+	return getFadeMode() == FADEMODE_DOWN;
+}
+
+bool GammaCorrectedFader::isFadeInProgress() {
+
+	return !(getFadeMode() == FADEMODE_IDLE);
 }
 
 void GammaCorrectedFader::fadeWave(uint16_t minToMaxTime, uint16_t numberOfTimes /*= 0*/) {
@@ -103,6 +128,7 @@ bool GammaCorrectedFader::isContinuouslyFadeWaving() {
 	return this->fadeWaveContinuous;
 }
 
+
 void GammaCorrectedFader::setContinuouslyFadeWaving(bool state)
 {
 	DEBUG_PRINT_HEADER();
@@ -120,98 +146,163 @@ void GammaCorrectedFader::setContinuouslyFadeWaving(bool state)
 
 BRIGHTNESS_TYPE GammaCorrectedFader::update() {
 
-	unsigned long now = millis();
-	unsigned long elapsed = now - getCurrentFadeStartTime();
+	DEBUG_PRINT_HEADER();
+	DEBUG_PRINTLN_F("Updating Fader");
 
-	float avgMinToMaxSpeed = ((float)BRIGHTNESS_TYPE_MAX - (float)BRIGHTNESS_TYPE_MIN) / (float)getMinToMaxTime(); //   units/ms
-	unsigned int units = (unsigned int)(avgMinToMaxSpeed * (float) elapsed);
+	if (isFadeInProgress()) {
 
-	//DEBUG_PRINT_HEADER();
-	//DEBUG_PRINT_F("Calculated average speed: ");
-	//DEBUG_PRINT(avgMinToMaxSpeed);
-	//DEBUG_PRINT_F(" brightness units/ms");
-	//DEBUG_PRINTLN_F(".");
-	//
-	//DEBUG_PRINT_HEADER();
-	//DEBUG_PRINT_F("Current unscaled brightness: ");
-	//DEBUG_PRINT(getUnscaledBrightness());
-	//DEBUG_PRINT_F(" brightness units");
-	//DEBUG_PRINTLN_F(".");
-	//
-	//DEBUG_PRINT_HEADER();
-	//DEBUG_PRINT_F("Elapsed since begin: ");
-	//DEBUG_PRINT(elapsed);
-	//DEBUG_PRINT_F(" ms");
-	//DEBUG_PRINTLN_F(".");
-	//
-	//DEBUG_PRINT_HEADER();
-	//DEBUG_PRINT_F("Current start brightness: ");
-	//DEBUG_PRINT(getCurrentFadeStartBrightness());
-	//DEBUG_PRINT_F(" brightness units");
-	//DEBUG_PRINTLN_F(".");
+		DEBUG_PRINT_HEADER();
+		DEBUG_PRINTLN_F("Fade in progress");
 
+		unsigned long now = millis();
+		unsigned long elapsed = now - getCurrentFadeStartTime();
+		unsigned int units;
 
-	// Increasing brightness
-	if (getUnscaledBrightness() < getCurrentFadeEndBrightness()) {
-
-		long newBrightness = (long)getCurrentFadeStartBrightness() + (long)units;
-		//DEBUG_PRINT_HEADER();
-		//DEBUG_PRINT_F("New unscaled brightness: ");
-		//DEBUG_PRINT(newBrightness);
-		//DEBUG_PRINT_F(" brightness units");
-		//DEBUG_PRINTLN_F(".");
-
-		if (newBrightness >= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime()) {
-			DEBUG_PRINT_HEADER();
-			DEBUG_PRINT_F("Desired brightness reached by increasing, ");
-			DEBUG_PRINTLN_F(".");
-
-			setUnscaledBrightness(getCurrentFadeEndBrightness());
-
-			if (isFadeWaving()) {
-				fadeToMin(getMinToMaxTime());
-				setFadeWavesLeft(getFadeWavesLeft() - 1);
-			}
+		if (getMinToMaxTime() != 0.0) {
+			float avgMinToMaxSpeed = ((float)BRIGHTNESS_TYPE_MAX - (float)BRIGHTNESS_TYPE_MIN) / (float)getMinToMaxTime(); //   units/ms
+			units = (unsigned int)(avgMinToMaxSpeed * (float)elapsed);
 		}
 		else {
-			setUnscaledBrightness(newBrightness);
+			units = BRIGHTNESS_TYPE_MAX;
 		}
-	}
 
-	// Decreasing brightness
-	else if (getUnscaledBrightness() > getCurrentFadeEndBrightness()) {
+		// Increasing brightness
+		if (isFadingUp()) {
 
-		long newBrightness = (long)getCurrentFadeStartBrightness() - (long)units;
-		//DEBUG_PRINT_HEADER();
-		//DEBUG_PRINT_F("New unscaled brightness: ");
-		//DEBUG_PRINT(newBrightness);
-		//DEBUG_PRINT_F(" brightness units");
-		//DEBUG_PRINTLN_F(".");
+			long newBrightness = (long)getCurrentFadeStartBrightness() + (long)units;
 
-		if (newBrightness <= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime()) {
-			DEBUG_PRINT_HEADER();
-			DEBUG_PRINT_F("Desired brightness reached by decreasing, ");
-			DEBUG_PRINTLN_F(".");
+			if (newBrightness >= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime() || newBrightness >= (long)getMaxUnscaledBrightness()) {
+				DEBUG_PRINT_HEADER();
+				DEBUG_PRINT_F("Desired brightness reached by increasing, ");
+				DEBUG_PRINTLN_F(".");
 
-			setUnscaledBrightness(getCurrentFadeEndBrightness());
+				setUnscaledBrightness(getCurrentFadeEndBrightness());
 
-			if (isFadeWaving()) {
-				if (getFadeWavesLeft() > 0) {
-					fadeToMax(getMinToMaxTime());
+				setFadeMode(FADEMODE_IDLE);
 
+				if (isFadeWaving()) {
+					fadeToMin(getMinToMaxTime());
+					setFadeWavesLeft(getFadeWavesLeft() - 1);
 				}
 			}
+			else {
+				setUnscaledBrightness(newBrightness);
+			}
 		}
-		else {
-			setUnscaledBrightness(newBrightness);
+
+		// Decreasing brightness
+		else if (isFadingDown()) {
+
+			long newBrightness = (long)getCurrentFadeStartBrightness() - (long)units;
+
+			if (newBrightness <= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime() || newBrightness <= (long)getMinUnscaledBrightness()) {
+				DEBUG_PRINT_HEADER();
+				DEBUG_PRINT_F("Desired brightness reached by decreasing, ");
+				DEBUG_PRINTLN_F(".");
+
+				setUnscaledBrightness(getCurrentFadeEndBrightness());
+
+				setFadeMode(FADEMODE_IDLE);
+
+				if (isFadeWaving()) {
+					if (getFadeWavesLeft() > 0) {
+						fadeToMax(getMinToMaxTime());
+
+					}
+				}
+			}
+			else {
+				setUnscaledBrightness(newBrightness);
+			}
 		}
 	}
-
 	else {
-		// Do nothing.
+		DEBUG_PRINT_HEADER();
+		DEBUG_PRINTLN_F("Fade not in progress");
 	}
 
 	return this->GammaCorrectedLED::update();
+}
+
+
+BRIGHTNESS_TYPE GammaCorrectedFader::update(BRIGHTNESS_TYPE value) {
+
+	DEBUG_PRINT_HEADER();
+	DEBUG_PRINTLN_F("Updating Fader");
+
+	if (isFadeInProgress()) {
+
+		DEBUG_PRINT_HEADER();
+		DEBUG_PRINTLN_F("Fade in progress");
+
+		unsigned long now = millis();
+		unsigned long elapsed = now - getCurrentFadeStartTime();
+		unsigned int units;
+
+		if (getMinToMaxTime() != 0.0) {
+			float avgMinToMaxSpeed = ((float)BRIGHTNESS_TYPE_MAX - (float)BRIGHTNESS_TYPE_MIN) / (float)getMinToMaxTime(); //   units/ms
+			units = (unsigned int)(avgMinToMaxSpeed * (float)elapsed);
+		}
+		else {
+			units = BRIGHTNESS_TYPE_MAX;
+		}
+
+		// Increasing brightness
+		if (isFadingUp()) {
+
+			long newBrightness = (long)getCurrentFadeStartBrightness() + (long)units;
+
+			if (newBrightness >= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime() || newBrightness >= (long)getMaxUnscaledBrightness()) {
+				DEBUG_PRINT_HEADER();
+				DEBUG_PRINT_F("Desired brightness reached by increasing, ");
+				DEBUG_PRINTLN_F(".");
+
+				setUnscaledBrightness(getCurrentFadeEndBrightness());
+
+				setFadeMode(FADEMODE_IDLE);
+
+				if (isFadeWaving()) {
+					fadeToMin(getMinToMaxTime());
+					setFadeWavesLeft(getFadeWavesLeft() - 1);
+				}
+			}
+			else {
+				setUnscaledBrightness(newBrightness);
+			}
+		}
+
+		// Decreasing brightness
+		else if (isFadingDown()) {
+
+			long newBrightness = (long)getCurrentFadeStartBrightness() - (long)units;
+
+			if (newBrightness <= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime() || newBrightness <= (long)getMinUnscaledBrightness()) {
+				DEBUG_PRINT_HEADER();
+				DEBUG_PRINT_F("Desired brightness reached by decreasing, ");
+				DEBUG_PRINTLN_F(".");
+
+				setUnscaledBrightness(getCurrentFadeEndBrightness());
+
+				setFadeMode(FADEMODE_IDLE);
+
+				if (isFadeWaving()) {
+					if (getFadeWavesLeft() > 0) {
+						fadeToMax(getMinToMaxTime());
+
+					}
+				}
+			}
+			else {
+				setUnscaledBrightness(newBrightness);
+			}
+		}
+	}
+	else {
+		DEBUG_PRINT_HEADER();
+		DEBUG_PRINTLN_F("Fade not in progress");
+	}
+
+	return this->GammaCorrectedLED::update(value);
 }
 
 
@@ -275,6 +366,11 @@ uint16_t GammaCorrectedFader::getFadeWavesLeft()
 	return this->fadeWavesLeft;
 }
 
+uint8_t GammaCorrectedFader::getFadeMode()
+{
+	return this->fadeMode;
+}
+
 void GammaCorrectedFader::setMinToMaxTime(unsigned long value)
 {
 	DEBUG_PRINT_HEADER();
@@ -288,4 +384,10 @@ void GammaCorrectedFader::setMinToMaxTime(unsigned long value)
 unsigned long GammaCorrectedFader::getMinToMaxTime()
 {
 	return this->minToMaxTime;
+}
+
+void GammaCorrectedFader::setFadeMode(uint8_t value)
+{
+	DEBUG_PARAMETER("Setting fade mode to:", value);
+	this->fadeMode = value;
 }

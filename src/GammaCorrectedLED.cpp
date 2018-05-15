@@ -21,8 +21,8 @@ GammaCorrectedLED::GammaCorrectedLED(char* identificator,
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("ERR:Upper limit must be greater than BRIGHTNESS_TYPE_MIN. Changing lower limit to BRIGHTNESS_TYPE_MIN (probably zero) and upper limit to BRIGHTNESS_TYPE_MAX.");
 		
-		setLowerLimit(BRIGHTNESS_TYPE_MIN);
-		setUpperLimit(BRIGHTNESS_TYPE_MAX);
+		setOutputLowerLimit(BRIGHTNESS_TYPE_MIN);
+		setOutputUpperLimit(BRIGHTNESS_TYPE_MAX);
 	}
 
 	//Check if upper limit is smaller than the maximum of the brightness type
@@ -30,8 +30,8 @@ GammaCorrectedLED::GammaCorrectedLED(char* identificator,
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("ERR:Upper limit must be smaller than BRIGHTNESS_TYPE_MAX. Changing lower limit to BRIGHTNESS_TYPE_MIN (probably zero) and upper limit to BRIGHTNESS_TYPE_MAX.");
 
-		setLowerLimit(BRIGHTNESS_TYPE_MIN);
-		setUpperLimit(BRIGHTNESS_TYPE_MAX);
+		setOutputLowerLimit(BRIGHTNESS_TYPE_MIN);
+		setOutputUpperLimit(BRIGHTNESS_TYPE_MAX);
 	}
 
 	//Check if lower limit is greater than the minimum of the brightness type
@@ -39,8 +39,8 @@ GammaCorrectedLED::GammaCorrectedLED(char* identificator,
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("ERR:Lower limit must be greater than BRIGHTNESS_TYPE_MIN. Changing lower limit to BRIGHTNESS_TYPE_MIN (probably zero) and upper limit to BRIGHTNESS_TYPE_MAX.");
 
-		setLowerLimit(BRIGHTNESS_TYPE_MIN);
-		setUpperLimit(BRIGHTNESS_TYPE_MAX);
+		setOutputLowerLimit(BRIGHTNESS_TYPE_MIN);
+		setOutputUpperLimit(BRIGHTNESS_TYPE_MAX);
 	}
 
 	//Check if upper limit is smaller than the maximum of the brightness type
@@ -48,8 +48,8 @@ GammaCorrectedLED::GammaCorrectedLED(char* identificator,
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("ERR:Lower limit must be smaller than BRIGHTNESS_TYPE_MAX. Changing lower limit to BRIGHTNESS_TYPE_MIN (probably zero) and upper limit to BRIGHTNESS_TYPE_MAX.");
 
-		setLowerLimit(BRIGHTNESS_TYPE_MIN);
-		setUpperLimit(BRIGHTNESS_TYPE_MAX);
+		setOutputLowerLimit(BRIGHTNESS_TYPE_MIN);
+		setOutputUpperLimit(BRIGHTNESS_TYPE_MAX);
 	}
 
 	//Check if upper limit is greater than the lower limit of the brightness type
@@ -57,13 +57,13 @@ GammaCorrectedLED::GammaCorrectedLED(char* identificator,
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("Upper limit must be greater than lower limit. Changing lower limit to BRIGHTNESS_TYPE_MIN (probably zero) and upper limit to BRIGHTNESS_TYPE_MAX.");
 		
-		setLowerLimit(BRIGHTNESS_TYPE_MIN);
-		setUpperLimit(BRIGHTNESS_TYPE_MAX);
+		setOutputLowerLimit(BRIGHTNESS_TYPE_MIN);
+		setOutputUpperLimit(BRIGHTNESS_TYPE_MAX);
 	}
 
 	else {
-		setLowerLimit(lowerLimit);
-		setUpperLimit(upperLimit);
+		setOutputLowerLimit(lowerLimit);
+		setOutputUpperLimit(upperLimit);
 	}
 
 	//Print a summary of the LED.
@@ -151,14 +151,14 @@ void GammaCorrectedLED::setLowPassFilterSmoothing(float smoothing)
 }
 
 //Sets the lower limit brightness of the LED.
-void GammaCorrectedLED::setLowerLimit(BRIGHTNESS_TYPE newLowerLimit) {
-	if (newLowerLimit >= getUpperLimit()) {
+void GammaCorrectedLED::setOutputLowerLimit(BRIGHTNESS_TYPE newLowerLimit) {
+	if (newLowerLimit >= getOutputUpperLimit()) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("ERR::Lower limit must be smaller than upper limit. Keeping previous value.");
 		return;
 	}
 
-	if (newLowerLimit != getLowerLimit()) {
+	if (newLowerLimit != getOutputLowerLimit()) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINT_F("Setting lower brightness limit to: ");
 		DEBUG_PRINT(newLowerLimit);
@@ -169,14 +169,14 @@ void GammaCorrectedLED::setLowerLimit(BRIGHTNESS_TYPE newLowerLimit) {
 }
 
 //Sets the upper limit brightness of the LED.
-void GammaCorrectedLED::setUpperLimit(BRIGHTNESS_TYPE newUpperLimit) {
-	if (newUpperLimit <= getLowerLimit()) {
+void GammaCorrectedLED::setOutputUpperLimit(BRIGHTNESS_TYPE newUpperLimit) {
+	if (newUpperLimit <= getOutputLowerLimit()) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("ERR::Upper limit must be greater than upper limit. Keeping previous value.");
 		return;
 	}
 
-	if (newUpperLimit != getUpperLimit()) {
+	if (newUpperLimit != getOutputUpperLimit()) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINT_F("Setting upper brightness limit to: ");
 		DEBUG_PRINT(newUpperLimit);
@@ -202,12 +202,12 @@ void GammaCorrectedLED::setUnscaledBrightness(BRIGHTNESS_TYPE brightness) {
 #pragma region Getters
 
 //Returns the lower brightness limit.
-BRIGHTNESS_TYPE GammaCorrectedLED::getLowerLimit() {
+BRIGHTNESS_TYPE GammaCorrectedLED::getOutputLowerLimit() {
 	return this->brightnessLowerLimit;
 }
 
 //Returns the upper brightness limit.
-BRIGHTNESS_TYPE GammaCorrectedLED::getUpperLimit() {
+BRIGHTNESS_TYPE GammaCorrectedLED::getOutputUpperLimit() {
 	return this->brightnessUpperLimit;
 }
 
@@ -216,20 +216,14 @@ BRIGHTNESS_TYPE GammaCorrectedLED::getUnscaledBrightness(){
 	return this->unscaledBrightness;
 }
 
-//Returns the current uncorrected but limited brightness.
-BRIGHTNESS_TYPE GammaCorrectedLED::getLimitedBrightness(){
-	return map(getUnscaledBrightness(), BRIGHTNESS_TYPE_MIN, BRIGHTNESS_TYPE_MAX, brightnessLowerLimit, brightnessUpperLimit);
-
+BRIGHTNESS_TYPE GammaCorrectedLED::getMaxUnscaledBrightness()
+{
+	return BRIGHTNESS_TYPE_MAX;
 }
 
-//Returns the current corrected and limited brightness.
-BRIGHTNESS_TYPE GammaCorrectedLED::getGammaCorrectedBrightness(){
-	if (getGammaCorrectionEnabled() == true) {
-		return gammaCorrectionLookupTable[getLimitedBrightness()];
-	}
-	else {
-		getLimitedBrightness();
-	}
+BRIGHTNESS_TYPE GammaCorrectedLED::getMinUnscaledBrightness()
+{
+	return BRIGHTNESS_TYPE_MIN;
 }
 
 //Returns the current set output pin.
@@ -303,37 +297,24 @@ bool GammaCorrectedLED::isDisabled()
 
 BRIGHTNESS_TYPE GammaCorrectedLED::update() {
 
-	BRIGHTNESS_TYPE currentUnscaledBrightness = getUnscaledBrightness();
+	DEBUG_PRINT_HEADER();
+	DEBUG_PRINTLN_F("Updating LED.");
 
-	BRIGHTNESS_TYPE currentBrightnessLimitedCorrected = getGammaCorrectedBrightness();
+	return unscaledToFinalBrightness(getUnscaledBrightness());
 
-	if (this ->previousUnscaledBrightness != currentUnscaledBrightness) {
+	DEBUG_PRINT_HEADER();
+	DEBUG_PRINTLN_F("Done Updating LED.");
+}
 
-		this ->previousUnscaledBrightness = currentUnscaledBrightness;
+BRIGHTNESS_TYPE GammaCorrectedLED::update(BRIGHTNESS_TYPE unscaledValue) {
 
-		DEBUG_PRINT_HEADER();
-		DEBUG_PRINT_F("Unscaled: ");
-		DEBUG_PRINT(currentUnscaledBrightness);
-		DEBUG_PRINT_F(", Limited: ");
-		DEBUG_PRINT(getLimitedBrightness());
-		DEBUG_PRINT_F(", Corrected: ");
-		DEBUG_PRINT(currentBrightnessLimitedCorrected);
-		DEBUG_PRINTLN_F(".");
-	}
+	DEBUG_PRINT_HEADER();
+	DEBUG_PRINTLN_F("Updating LED.");
 
-	float endBrightness = (float) currentBrightnessLimitedCorrected;
+	return unscaledToFinalBrightness(unscaledValue);
 
-	// Low pass filter
-	if (getLowPassFilterEnabled()) {
-
-		endBrightness = (getLowPassFilterSmoothing() * this->previousEndBrightness) + ((1 - getLowPassFilterSmoothing()) * endBrightness);
-	}
-
-	analogWrite(getPin(), endBrightness);
-
-	this->previousEndBrightness = (float) endBrightness;
-
-	return (BRIGHTNESS_TYPE) endBrightness;
+	DEBUG_PRINT_HEADER();
+	DEBUG_PRINTLN_F("Done Updating LED.");
 }
 
 //Increase the current brightness by the given amount.
@@ -379,6 +360,46 @@ void GammaCorrectedLED::disable() {
 	DEBUG_PRINT_HEADER();
 	DEBUG_PRINTLN_F("Disabling LED output.");
 	this->enabled = false;
+}
+
+BRIGHTNESS_TYPE GammaCorrectedLED::unscaledToFinalBrightness(BRIGHTNESS_TYPE unscaledBrightness)
+{
+	DEBUG_PRINT_HEADER();
+	DEBUG_PRINTLN_F("Calculating Filter:");
+	DEBUG_PARAMETER("previousEndBrightness", this->previousEndBrightness);
+	DEBUG_PARAMETER("smoothing", getLowPassFilterSmoothing());
+	DEBUG_PARAMETER("inputBrightness", unscaledBrightness);
+
+	float endBrightness;
+
+	if (getLowPassFilterEnabled()) {
+		endBrightness = (getLowPassFilterSmoothing() * this->previousEndBrightness) + ((1.0 - getLowPassFilterSmoothing()) * (float)unscaledBrightness);
+	}
+	else {
+		endBrightness = unscaledBrightness;
+	}
+
+	this->previousEndBrightness = endBrightness;
+
+	DEBUG_PARAMETER("filtered", endBrightness);
+
+	DEBUG_PRINT_HEADER();
+	DEBUG_PRINT_F("Mapping value: ");
+	DEBUG_PRINT(endBrightness);
+	DEBUG_PRINTLN_F(".");
+
+	BRIGHTNESS_TYPE finalBrightness = map((BRIGHTNESS_TYPE)round(endBrightness), BRIGHTNESS_TYPE_MIN, BRIGHTNESS_TYPE_MAX, brightnessLowerLimit, brightnessUpperLimit);
+
+	DEBUG_PRINT_HEADER();
+	DEBUG_PRINT_F("Gamma Correcting for value: ");
+	DEBUG_PRINT(finalBrightness);
+	DEBUG_PRINTLN_F(".");
+
+	if (getGammaCorrectionEnabled() == true) {
+		finalBrightness = gammaCorrectionLookupTable[finalBrightness];
+	}
+
+	return finalBrightness;
 }
 
 void GammaCorrectedLED::enable() {

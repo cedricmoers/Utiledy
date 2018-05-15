@@ -4,7 +4,6 @@
 
 #ifndef _GAMMACORRECTEDBLINKER_h
 #define _GAMMACORRECTEDBLINKER_h
-#include "GammaCorrectedLED.h"
 
 //#if defined(ARDUINO) && ARDUINO >= 100
 //	#include "arduino.h"
@@ -12,9 +11,16 @@
 //	#include "WProgram.h
 //#endif
 //
+
+#ifndef _GAMMACORRECTEDFADER_h
+#include "GammaCorrectedFader.h"
 #endif
 
-class GammaCorrectedBlinker : public GammaCorrectedLED
+#endif
+
+
+
+class GammaCorrectedBlinker : public virtual GammaCorrectedFader
 {
 
 public :
@@ -37,6 +43,7 @@ public :
 	void setHighTime(uint16_t onTime);
 	void setLowTime(uint16_t offTime);
 	void setOffset(uint16_t offset);
+	void setUnscaledBrightness(BRIGHTNESS_TYPE brightness) override;
 	void setHighBrightness(BRIGHTNESS_TYPE brightness);
 	void setLowBrightness(BRIGHTNESS_TYPE brightness);
 
@@ -50,6 +57,11 @@ public :
 	uint16_t getOffset();										//Returns the offset time of the led in blink mode.
 	BRIGHTNESS_TYPE getHighBrightness();
 	BRIGHTNESS_TYPE getLowBrightness();
+	BRIGHTNESS_TYPE getUnscaledBrightness() override;
+	BRIGHTNESS_TYPE getMinUnscaledBrightness() override;
+	BRIGHTNESS_TYPE getMaxUnscaledBrightness() override;
+
+
 
 	uint8_t getMode();
 	bool getOutputState();
@@ -86,7 +98,6 @@ private :
 
 	bool			state;
 
-	BRIGHTNESS_TYPE highBrightness;
 	BRIGHTNESS_TYPE lowBrightness;
 
 	unsigned long previousToggleTimestamp;

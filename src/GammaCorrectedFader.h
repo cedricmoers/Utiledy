@@ -4,16 +4,22 @@
 
 #ifndef _GAMMACORRECTEDFADER_h
 #define _GAMMACORRECTEDFADER_h
-
+#define FADEMODE_UP 1
+#define FADEMODE_DOWN 2
+#define FADEMODE_IDLE 0
 //#if defined(ARDUINO) && ARDUINO >= 100
 //	#include "arduino.h"
 //#else
 //	#include "WProgram.h"
 //#endif
 
+#ifndef _GAMMACORRECTEDLED_h
 #include "GammaCorrectedLED.h"
+#endif
 
 #endif
+
+
 
 
 class GammaCorrectedFader : public GammaCorrectedLED
@@ -32,6 +38,8 @@ public:
 	// Functions
 	BRIGHTNESS_TYPE update();
 
+	BRIGHTNESS_TYPE update(BRIGHTNESS_TYPE value);
+
 	void fadeToValue(uint16_t time, BRIGHTNESS_TYPE brightness);		//Fade the led to a given value, within the given time.
 	void fadeToMax(uint16_t time);										//Fade the led to fully on within the given time.
 	void fadeToMin(uint16_t time);										//Fade the led to fully off within the given time.
@@ -41,10 +49,14 @@ public:
 	// void pauseFade();												//Pauses the fading of the LED.
 	// void resumeFade();
 	
-	bool fadingInProgress();											// Returns true if the current unscaled brightness is not equal to the ending brightness. 
+	uint8_t getFadeMode();
+	bool isFadingUp();
+	bool isFadingDown();
+	bool isFadeInProgress();											// Returns true if the current unscaled brightness is not equal to the ending brightness. 
 	bool isFadeWaving();												// Indicates if the fader is fade waving.
 	bool isContinuouslyFadeWaving();
 
+	void setFadeInProgress(bool state);
 	void setContinuouslyFadeWaving(bool state);
 
 	void setCurrentFadeEndBrightness(BRIGHTNESS_TYPE brightness);
@@ -58,12 +70,19 @@ public:
 	void setFadeWavesLeft(uint16_t numberOfWaves);
 	uint16_t getFadeWavesLeft();
 
+
+
 	void setMinToMaxTime(unsigned long value);
 	unsigned long getMinToMaxTime();
 
 private:
 
 	// Fields
+
+	void setFadeMode(uint8_t value);
+
+	uint8_t fadeMode;
+
 	bool fadeWaveContinuous = false;
 	uint16_t fadeWavesLeft = 0;
 	BRIGHTNESS_TYPE currentFadeEndBrightness;

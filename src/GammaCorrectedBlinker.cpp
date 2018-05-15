@@ -12,7 +12,7 @@ GammaCorrectedBlinker::GammaCorrectedBlinker(
 	BRIGHTNESS_TYPE lowerLimit /*= BRIGHTNESS_TYPE_MIN*/,
 	BRIGHTNESS_TYPE upperLimit /*= BRIGHTNESS_TYPE_MAX*/)
 	:
-	GammaCorrectedLED(identificator, ledPin, gammaCorrection, lowerLimit, lowerLimit)
+	GammaCorrectedFader(identificator, ledPin, gammaCorrection, lowerLimit, lowerLimit)
 {
 	setHighBrightness(BRIGHTNESS_TYPE_MAX);
 	setLowBrightness(BRIGHTNESS_TYPE_MIN);
@@ -38,11 +38,42 @@ uint16_t GammaCorrectedBlinker::getOffset() {
 }
 
 BRIGHTNESS_TYPE GammaCorrectedBlinker::getHighBrightness() {
-	return this->highBrightness;
+	//return this->highBrightness;
+	return GammaCorrectedLED::getUnscaledBrightness();
 }
 
 BRIGHTNESS_TYPE GammaCorrectedBlinker::getLowBrightness() {
 	return this->lowBrightness;
+}
+
+BRIGHTNESS_TYPE GammaCorrectedBlinker::getUnscaledBrightness()
+{
+	BRIGHTNESS_TYPE blinkBrightness;
+
+	if (getMode() == BLINKMODE_STOPPED) {
+		blinkBrightness = 0;
+	}
+	else if (offsetInProgress) {
+		blinkBrightness = 0;
+	}
+	else if (isOn()) {
+		blinkBrightness = getHighBrightness();
+	}
+	else if (isOff()) {
+		blinkBrightness = getLowBrightness();
+	}
+
+	return blinkBrightness;
+}
+
+BRIGHTNESS_TYPE GammaCorrectedBlinker::getMinUnscaledBrightness()
+{
+	return getLowBrightness();
+}
+
+BRIGHTNESS_TYPE GammaCorrectedBlinker::getMaxUnscaledBrightness()
+{
+	return BRIGHTNESS_TYPE_MAX;
 }
 
 uint8_t GammaCorrectedBlinker::getMode() {
@@ -174,6 +205,11 @@ void GammaCorrectedBlinker::setOffset(uint16_t offset) {
 	}
 }
 
+void GammaCorrectedBlinker::setUnscaledBrightness(BRIGHTNESS_TYPE brightness)
+{
+	setHighBrightness(brightness);
+}
+
 
 void GammaCorrectedBlinker::setHighBrightness(BRIGHTNESS_TYPE brightness) {
 	if (brightness > BRIGHTNESS_TYPE_MAX || brightness < BRIGHTNESS_TYPE_MIN) {
@@ -191,11 +227,13 @@ void GammaCorrectedBlinker::setHighBrightness(BRIGHTNESS_TYPE brightness) {
 		DEBUG_PRINT_F("Setting blink on-brightness to: ");
 		DEBUG_PRINT(brightness);
 		DEBUG_PRINTLN_F(".");
-		this->highBrightness = brightness;
+
+		GammaCorrectedLED::setUnscaledBrightness(brightness);
 	}
 }
 
 void GammaCorrectedBlinker::setLowBrightness(BRIGHTNESS_TYPE brightness) {
+
 	if (brightness > BRIGHTNESS_TYPE_MAX || brightness < BRIGHTNESS_TYPE_MIN) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("Cannot set the off-brightness to a brightness higher than BRIGHTNESS_TYPE_MAX  or lower than BRIGHTNESS_TYPE_MIN. The value will be changed to BRIGHTNESS_TYPE_MIN.");
@@ -203,7 +241,7 @@ void GammaCorrectedBlinker::setLowBrightness(BRIGHTNESS_TYPE brightness) {
 	}
 	if (brightness >= getHighBrightness()) {
 		DEBUG_PRINT_HEADER();
-		DEBUG_PRINTLN_F("The blink off-brightness should not be greater than or equal to the off-brightness. The value will be changed to BRIGHTNESS_TYPE_MIN.");
+		DEBUG_PRINTLN_F("The blink off-brightness should not be greater than or equal to the on-brightness. The value will be changed to BRIGHTNESS_TYPE_MIN.");
 		brightness = BRIGHTNESS_TYPE_MIN;
 	}
 	if (getLowBrightness() != brightness) {
@@ -265,6 +303,8 @@ BRIGHTNESS_TYPE GammaCorrectedBlinker::update()
 	unsigned long elapsed;
 	unsigned long delay;
 
+	BRIGHTNESS_TYPE final;
+
 	if (getMode() == BLINKMODE_RUNNING) {
 
 		elapsed = now - previousToggleTimestamp;
@@ -305,24 +345,8 @@ BRIGHTNESS_TYPE GammaCorrectedBlinker::update()
 				//Do nothing
 			}
 		}
-
-		if (offsetInProgress) {
-			setUnscaledBrightness(0);
-		}
-		else if (isOn()) {
-			setUnscaledBrightness(getHighBrightness());
-		}
-		else if (isOff()) {
-			setUnscaledBrightness(getLowBrightness());
-		}
-	}
-	else if (getMode() == BLINKMODE_PAUSED) {
-		
-	}
-	else if (getMode() == BLINKMODE_STOPPED) {
-
 	}
 
-	return this->GammaCorrectedLED::update();
+	return GammaCorrectedFader::update();
 
 }
