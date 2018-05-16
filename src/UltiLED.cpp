@@ -116,18 +116,30 @@ void UltiLED::setToSpark()
 
 void UltiLED::setToBlink(BRIGHTNESS_TYPE highBrightness, BRIGHTNESS_TYPE lowBrightness, unsigned long highTime, unsigned long lowTime)
 {
+	setHighTime(highTime);
+	setLowTime(lowTime);
+	setHighBrightness(highBrightness);
+	setLowBrightness(lowBrightness);
+	setToBlink();
 }
 
 void UltiLED::setToBlink(unsigned long highTime, unsigned long lowTime)
 {
+	setHighTime(highTime);
+	setLowTime(lowTime);
+	setToBlink();
 }
 
 void UltiLED::setToBlink(BRIGHTNESS_TYPE highBrightness, BRIGHTNESS_TYPE lowBrightness)
 {
+	setHighBrightness(highBrightness);
+	setLowBrightness(lowBrightness);
+	setToBlink();
 }
 
 void UltiLED::setToBlink()
 {
+	setMode(ULTILEDMODE_BLINKER);
 }
 
 void UltiLED::setMode(uint8_t value)
