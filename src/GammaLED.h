@@ -14,19 +14,19 @@
 //
 
 //Set for which resolution the library needs to be compiled.
-#define UPDATEABLE_LED_BRIGHTNESS_RES_12BIT
-//#define UPDATEABLE_LED_BRIGHTNESS_RES_10BIT
-//#define UPDATEABLE_LED_BRIGHTNESS_RES_8BIT
+#define BRIGHTNESS_RES_12BIT
+//#define BRIGHTNESS_RES_10BIT
+//#define BRIGHTNESS_RES_8BIT
 
-#ifdef UPDATEABLE_LED_BRIGHTNESS_RES_12BIT
+#ifdef BRIGHTNESS_RES_12BIT
 #define BRIGHTNESS_TYPE uint16_t 
 #define BRIGHTNESS_TYPE_MAX 4095
 #define BRIGHTNESS_TYPE_MIN 0
-#elif defined UPDATEABLE_LED_BRIGHTNESS_RES_10BIT
+#elif defined BRIGHTNESS_RES_10BIT
 #define BRIGHTNESS_TYPE uint16_t 
 #define BRIGHTNESS_TYPE_MAX 1023
 #define BRIGHTNESS_TYPE_MIN 0
-#elif defined UPDATEABLE_LED_BRIGHTNESS_RES_8BIT
+#elif defined BRIGHTNESS_RES_8BIT
 #define BRIGHTNESS_TYPE uint8_t 
 #define BRIGHTNESS_TYPE_MAX 255
 #define BRIGHTNESS_TYPE_MIN 0
@@ -38,7 +38,7 @@
 
 
 //Set the gamma correction based upon the resolution. TODO:: Check why PROGMEM crashes ESP
-#ifdef UPDATEABLE_LED_BRIGHTNESS_RES_12BIT
+#ifdef BRIGHTNESS_RES_12BIT
 
 const uint16_t gammaCorrectionLookupTable[] = {
 	0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
@@ -170,7 +170,7 @@ const uint16_t gammaCorrectionLookupTable[] = {
 	3921,3924,3926,3929,3932,3935,3937,3940,3943,3946,3948,3951,3954,3957,3959,3962,3965,3967,3970,3973,3976,3978,3981,3984,3987,3989,3992,3995,3998,4001,4003,4006,
 	4009,4012,4014,4017,4020,4023,4025,4028,4031,4034,4036,4039,4042,4045,4048,4050,4053,4056,4059,4061,4064,4067,4070,4073,4075,4078,4081,4084,4087,4089,4092,4095 };
 
-#elif defined UPDATEABLE_LED_BRIGHTNESS_RES_10BIT
+#elif defined BRIGHTNESS_RES_10BIT
 
 const uint16_t gammaCorrectionLookupTable[] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -238,7 +238,7 @@ const uint16_t gammaCorrectionLookupTable[] = {
 	939,941,944,947,949,952,955,957,960,963,965,968,971,973,976,979,
 	982,984,987,990,992,995,998,1001,1004,1006,1009,1012,1015,1017,1020,1023 };
 
-#elif defined  UPDATEABLE_LED_BRIGHTNESS_RES_8BIT
+#elif defined  BRIGHTNESS_RES_8BIT
 
 //Lookup table for gamma correction.
 const uint16_t gammaCorrectionLookupTable[] = {
