@@ -93,18 +93,25 @@ BRIGHTNESS_TYPE UltiLED::getMaxUnscaledBrightness()
 
 void UltiLED::setToSpark(BRIGHTNESS_TYPE intensity, BRIGHTNESS_TYPE average, unsigned long sparkUpdateInterval)
 {
+	setUnscaledBrightness(average);
+	setToSpark(intensity, average, sparkUpdateInterval);
 }
 
 void UltiLED::setToSpark(BRIGHTNESS_TYPE intensity, unsigned long sparkUpdateInterval)
 {
+	setSparkInterval(sparkUpdateInterval);
+	setToSpark(intensity);
 }
 
 void UltiLED::setToSpark(BRIGHTNESS_TYPE intensity)
 {
+	setIntensity(intensity);
+	setToSpark();
 }
 
 void UltiLED::setToSpark()
 {
+	setMode(ULTILEDMODE_SPARKLER);
 }
 
 void UltiLED::setToBlink(BRIGHTNESS_TYPE highBrightness, BRIGHTNESS_TYPE lowBrightness, unsigned long highTime, unsigned long lowTime)
@@ -129,7 +136,13 @@ void UltiLED::setMode(uint8_t value)
 	DEBUG_PRINT_F("Setting Ultiled mode to: ");
 	DEBUG_PRINTLN(value);
 
+	// Get the value of the brightness before the mode change.
+	BRIGHTNESS_TYPE currentBrightness = getUnscaledBrightness();
+
 	this->mode = value;
+
+	// Set the value to the previous brightness.
+	setUnscaledBrightness(currentBrightness);
 }
 
 uint8_t UltiLED::getMode()
