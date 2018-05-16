@@ -15,19 +15,19 @@
 #define ULTILEDMODE_BLINKER 1
 #define ULTILEDMODE_SPARKLER 2
 
-#ifndef _GAMMACORRECTEDSPARKLER_h
-#include "GammaCorrectedSparkler.h"
+#ifndef _SPARKLER_h
+#include "Sparkler.h"
 #endif
 
-#ifndef _GAMMACORRECTEDBLINKER_h
-#include "GammaCorrectedBlinker.h"
+#ifndef _BLINKER_h
+#include "Blinker.h"
 #endif
 //
 #endif
 
 
 
-class UltiLED : public GammaCorrectedBlinker, public GammaCorrectedSparkler
+class UltiLED : public Blinker, public Sparkler
 {
 public:
 

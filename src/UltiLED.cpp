@@ -8,9 +8,9 @@ UltiLED::UltiLED(
 	BRIGHTNESS_TYPE lowerLimit /*= BRIGHTNESS_TYPE_MIN*/,
 	BRIGHTNESS_TYPE upperLimit /*= BRIGHTNESS_TYPE_MAX*/)
 	:
-	GammaCorrectedFader(identificator, ledPin, gammaCorrection, lowerLimit, lowerLimit),
-	GammaCorrectedSparkler(identificator, ledPin, gammaCorrection, lowerLimit, lowerLimit),
-	GammaCorrectedBlinker(identificator, ledPin, gammaCorrection, lowerLimit, lowerLimit)
+	Fader(identificator, ledPin, gammaCorrection, lowerLimit, lowerLimit),
+	Sparkler(identificator, ledPin, gammaCorrection, lowerLimit, lowerLimit),
+	Blinker(identificator, ledPin, gammaCorrection, lowerLimit, lowerLimit)
 {
 	setMode(ULTILEDMODE_NORMAL);
 }
@@ -21,15 +21,15 @@ void UltiLED::setUnscaledBrightness(BRIGHTNESS_TYPE value)
 	switch (getMode())
 	{
 	case ULTILEDMODE_BLINKER :
-		GammaCorrectedBlinker::setUnscaledBrightness(value);
+		Blinker::setUnscaledBrightness(value);
 		break;
 
 	case ULTILEDMODE_NORMAL :
-		GammaCorrectedFader::setUnscaledBrightness(value);
+		Fader::setUnscaledBrightness(value);
 		break;
 
 	case ULTILEDMODE_SPARKLER : 
-		GammaCorrectedSparkler::setUnscaledBrightness(value);
+		Sparkler::setUnscaledBrightness(value);
 		break;
 
 	default:
@@ -42,13 +42,13 @@ BRIGHTNESS_TYPE UltiLED::getUnscaledBrightness()
 	switch (getMode())
 	{
 	case ULTILEDMODE_BLINKER:
-		return GammaCorrectedBlinker::getUnscaledBrightness();
+		return Blinker::getUnscaledBrightness();
 
 	case ULTILEDMODE_NORMAL:
-		return GammaCorrectedFader::getUnscaledBrightness();
+		return Fader::getUnscaledBrightness();
 
 	case ULTILEDMODE_SPARKLER:
-		return GammaCorrectedSparkler::getUnscaledBrightness();
+		return Sparkler::getUnscaledBrightness();
 
 	default:
 		return 0;
@@ -60,13 +60,13 @@ BRIGHTNESS_TYPE UltiLED::getMinUnscaledBrightness()
 	switch (getMode())
 	{
 	case ULTILEDMODE_BLINKER:
-		return GammaCorrectedBlinker::getMinUnscaledBrightness();
+		return Blinker::getMinUnscaledBrightness();
 
 	case ULTILEDMODE_NORMAL:
-		return GammaCorrectedFader::getMinUnscaledBrightness();
+		return Fader::getMinUnscaledBrightness();
 
 	case ULTILEDMODE_SPARKLER:
-		return GammaCorrectedSparkler::getMinUnscaledBrightness();
+		return Sparkler::getMinUnscaledBrightness();
 
 	default:
 		return 0;
@@ -78,13 +78,13 @@ BRIGHTNESS_TYPE UltiLED::getMaxUnscaledBrightness()
 	switch (getMode())
 	{
 	case ULTILEDMODE_BLINKER:
-		return GammaCorrectedBlinker::getMaxUnscaledBrightness();
+		return Blinker::getMaxUnscaledBrightness();
 
 	case ULTILEDMODE_NORMAL:
-		return GammaCorrectedFader::getMaxUnscaledBrightness();
+		return Fader::getMaxUnscaledBrightness();
 
 	case ULTILEDMODE_SPARKLER:
-		return GammaCorrectedSparkler::getMaxUnscaledBrightness();
+		return Sparkler::getMaxUnscaledBrightness();
 
 	default:
 		return 0;
@@ -167,13 +167,13 @@ BRIGHTNESS_TYPE UltiLED::update()
 	switch (getMode())
 	{
 	case ULTILEDMODE_BLINKER:
-		return GammaCorrectedBlinker::update();
+		return Blinker::update();
 
 	case ULTILEDMODE_NORMAL:
-		return GammaCorrectedFader::update();
+		return Fader::update();
 
 	case ULTILEDMODE_SPARKLER:
-		return GammaCorrectedSparkler::update();
+		return Sparkler::update();
 
 	default:
 		return 0;
