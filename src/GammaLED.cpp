@@ -260,7 +260,7 @@ bool GammaLED::isShining() {
 
 //Indicates if the MultiLED is at its high limit.
 bool GammaLED::isMax() {
-	if (getUnscaledBrightness() >= BRIGHTNESS_TYPE_MAX) {
+	if (getUnscaledBrightness() >= getMaxUnscaledBrightness()) {
 		return true;
 	}
 	else {
@@ -270,7 +270,7 @@ bool GammaLED::isMax() {
 
 //Indicates if the MultiLED is at its low limit.
 bool GammaLED::isMin() {
-	if (getUnscaledBrightness() <= BRIGHTNESS_TYPE_MIN) {
+	if (getUnscaledBrightness() <= getMaxUnscaledBrightness()) {
 		return true;
 	}
 	else {

@@ -29,13 +29,13 @@ void setup() {
 
 	led1.setLowPassFilterSmoothing(0.9);
 
-	led1.fadeWave(5000, 0);
-
-	led1.setMode(ULTILEDMODE_BLINKER);
-	led1.setHighBrightness(BRIGHTNESS_TYPE_MAX);
+	led1.setMode(ULTILEDMODE_NORMAL);
+	led1.setHighBrightness(BRIGHTNESS_TYPE_MAX );
 	led1.setLowBrightness(500);
 	led1.setHighTime(1000);
 	led1.setLowTime(1000);
+
+	led1.fadeWave(5000, 0);
 
 	led1.start();
 }

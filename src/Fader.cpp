@@ -110,7 +110,12 @@ void Fader::fadeWave(uint16_t minToMaxTime, uint16_t numberOfTimes /*= 0*/) {
 		setFadeWavesLeft(numberOfTimes);
 	}
 
-	fadeToMax(minToMaxTime);
+	if (!this->isMax()) {
+		fadeToMax(minToMaxTime);
+	}
+	else {
+		fadeToMin(minToMaxTime);
+	}
 }
 
 bool Fader::isFadeWaving() {
