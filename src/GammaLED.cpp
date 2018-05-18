@@ -303,17 +303,6 @@ BRIGHTNESS_TYPE GammaLED::update() {
 	DEBUG_PRINTLN_F("Done Updating LED.");
 }
 
-BRIGHTNESS_TYPE GammaLED::update(BRIGHTNESS_TYPE unscaledValue) {
-
-	DEBUG_PRINT_HEADER();
-	DEBUG_PRINTLN_F("Updating LED.");
-
-	return unscaledToFinalBrightness(unscaledValue);
-
-	DEBUG_PRINT_HEADER();
-	DEBUG_PRINTLN_F("Done Updating LED.");
-}
-
 //Increase the current brightness by the given amount.
 void GammaLED::increaseBrightness(BRIGHTNESS_TYPE amount) {
 

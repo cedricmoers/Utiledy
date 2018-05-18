@@ -210,10 +210,7 @@ BRIGHTNESS_TYPE Fader::update() {
 				setFadeMode(FADEMODE_IDLE);
 
 				if (isFadeWaving()) {
-					if (getFadeWavesLeft() > 0) {
-						fadeToMax(getMinToMaxTime());
-
-					}
+					fadeToMax(getMinToMaxTime());
 				}
 			}
 			else {
@@ -227,87 +224,6 @@ BRIGHTNESS_TYPE Fader::update() {
 	}
 
 	return this->GammaLED::update();
-}
-
-
-BRIGHTNESS_TYPE Fader::update(BRIGHTNESS_TYPE value) {
-
-	DEBUG_PRINT_HEADER();
-	DEBUG_PRINTLN_F("Updating Fader");
-
-	if (isFadeInProgress()) {
-
-		DEBUG_PRINT_HEADER();
-		DEBUG_PRINTLN_F("Fade in progress");
-
-		unsigned long now = millis();
-		unsigned long elapsed = now - getCurrentFadeStartTime();
-		unsigned int units;
-
-		if (getMinToMaxTime() != 0.0) {
-			float avgMinToMaxSpeed = ((float)BRIGHTNESS_TYPE_MAX - (float)BRIGHTNESS_TYPE_MIN) / (float)getMinToMaxTime(); //   units/ms
-			units = (unsigned int)(avgMinToMaxSpeed * (float)elapsed);
-		}
-		else {
-			units = BRIGHTNESS_TYPE_MAX;
-		}
-
-		// Increasing brightness
-		if (isFadingUp()) {
-
-			long newBrightness = (long)getCurrentFadeStartBrightness() + (long)units;
-
-			if (newBrightness >= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime() || newBrightness >= (long)getMaxUnscaledBrightness()) {
-				DEBUG_PRINT_HEADER();
-				DEBUG_PRINT_F("Desired brightness reached by increasing, ");
-				DEBUG_PRINTLN_F(".");
-
-				setUnscaledBrightness(getCurrentFadeEndBrightness());
-
-				setFadeMode(FADEMODE_IDLE);
-
-				if (isFadeWaving()) {
-					fadeToMin(getMinToMaxTime());
-					setFadeWavesLeft(getFadeWavesLeft() - 1);
-				}
-			}
-			else {
-				setUnscaledBrightness(newBrightness);
-			}
-		}
-
-		// Decreasing brightness
-		else if (isFadingDown()) {
-
-			long newBrightness = (long)getCurrentFadeStartBrightness() - (long)units;
-
-			if (newBrightness <= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime() || newBrightness <= (long)getMinUnscaledBrightness()) {
-				DEBUG_PRINT_HEADER();
-				DEBUG_PRINT_F("Desired brightness reached by decreasing, ");
-				DEBUG_PRINTLN_F(".");
-
-				setUnscaledBrightness(getCurrentFadeEndBrightness());
-
-				setFadeMode(FADEMODE_IDLE);
-
-				if (isFadeWaving()) {
-					if (getFadeWavesLeft() > 0) {
-						fadeToMax(getMinToMaxTime());
-
-					}
-				}
-			}
-			else {
-				setUnscaledBrightness(newBrightness);
-			}
-		}
-	}
-	else {
-		DEBUG_PRINT_HEADER();
-		DEBUG_PRINTLN_F("Fade not in progress");
-	}
-
-	return this->GammaLED::update(value);
 }
 
 
