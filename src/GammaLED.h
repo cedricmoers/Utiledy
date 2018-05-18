@@ -13,6 +13,11 @@
 //
 //
 
+//Gammacorrection achieves a more linear perception of the LED when increasing or decreasing the brightness.
+#define GAMMACORRECTION_ON		true			//Gammacorrection enabled
+#define GAMMACORRECTION_OFF		false			//Gammacorrection disabled
+
+
 //Set for which resolution the library needs to be compiled.
 #define BRIGHTNESS_RES_12BIT
 //#define BRIGHTNESS_RES_10BIT
@@ -322,14 +327,6 @@ const uint16_t gammaCorrectionLookupTable[] = {
 #define DEBUG_PRINTLN_F(...)     //now defines a blank line
 #endif
 
-
-
-
-
-
-//Gammacorrection achieves a more linear perception of the MultiLED when increasing or decreasing the brightness.
-#define GAMMACORRECTION_ON		true			//Gammacorrection enabled
-#define GAMMACORRECTION_OFF		false			//Gammacorrection disabled
 
 
 
