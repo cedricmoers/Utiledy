@@ -233,12 +233,12 @@ void Blinker::setLowBrightness(BRIGHTNESS_TYPE brightness) {
 	if (brightness > BRIGHTNESS_TYPE_MAX || brightness < BRIGHTNESS_TYPE_MIN) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("Cannot set the off-brightness to a brightness higher than BRIGHTNESS_TYPE_MAX  or lower than BRIGHTNESS_TYPE_MIN. The value will be changed to BRIGHTNESS_TYPE_MIN.");
-		brightness = BRIGHTNESS_TYPE_MIN;
+		brightness = getMinUnscaledBrightness();
 	}
 	if (brightness >= getHighBrightness()) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("The blink off-brightness should not be greater than or equal to the on-brightness. The value will be changed to BRIGHTNESS_TYPE_MIN.");
-		brightness = BRIGHTNESS_TYPE_MIN;
+		brightness = getMinUnscaledBrightness();
 	}
 	if (getLowBrightness() != brightness) {
 		DEBUG_PRINT_HEADER();

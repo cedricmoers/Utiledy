@@ -16,7 +16,7 @@ Fader::Fader(
 	setCurrentFadeEndBrightness(0);
 	setCurrentFadeStartTime(0);
 	setContinuouslyFadeWaving(false);
-	setMinToMaxTime(0);
+	setMinToMaxTime(1000);
 	setFadeWavesLeft(0);
 	setFadeMode(FADEMODE_IDLE);
 }
@@ -164,7 +164,7 @@ BRIGHTNESS_TYPE Fader::update() {
 		unsigned int units;
 
 		if (getMinToMaxTime() != 0.0) {
-			float avgMinToMaxSpeed = ((float)BRIGHTNESS_TYPE_MAX - (float)BRIGHTNESS_TYPE_MIN) / (float)getMinToMaxTime(); //   units/ms
+			float avgMinToMaxSpeed = ((float)getMaxUnscaledBrightness() - (float)getMinUnscaledBrightness()) / (float)getMinToMaxTime(); //   units/ms
 			units = (unsigned int)(avgMinToMaxSpeed * (float)elapsed);
 		}
 		else {

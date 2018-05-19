@@ -48,7 +48,7 @@
 	//Set the gamma correction based upon the resolution. TODO:: Check why PROGMEM crashes ESP
 	#ifdef BRIGHTNESS_RES_12BIT
 
-	const uint16_t gammaCorrectionLookupTable[] = {
+	const BRIGHTNESS_TYPE gammaCorrectionLookupTable[] = {
 		0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 		0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 		0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
@@ -180,7 +180,7 @@
 	
 	#elif defined BRIGHTNESS_RES_10BIT
 
-	const uint16_t gammaCorrectionLookupTable[] = {
+	const BRIGHTNESS_TYPE gammaCorrectionLookupTable[] = {
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -249,7 +249,7 @@
 	#elif defined  BRIGHTNESS_RES_8BIT
 
 	//Lookup table for gamma correction.
-	const uint16_t gammaCorrectionLookupTable[] = {
+	const BRIGHTNESS_TYPE gammaCorrectionLookupTable[] = {
 		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,
 		1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,
@@ -348,14 +348,14 @@ public:
 	void setGammaCorrectionEnabled(bool state);						// Sets the gamma correction to on/off.
 	void setLowPassFilterEnabled(bool state);						// Sets the state of the low pass filter.
 	void setLowPassFilterSmoothing(float smoothing);				// Sets the smoothing factor of the low pass filter. Must be between 0 and 1.
-	void setOutputLowerLimit(BRIGHTNESS_TYPE lowerLimit);					// Sets the lower limit of the MultiLED.
-	void setOutputUpperLimit(BRIGHTNESS_TYPE upperLimit);					// Sets the upper limit of the MultiLED.
-	virtual void setUnscaledBrightness(BRIGHTNESS_TYPE brightness);			// Sets the brightness to a certain value.
+	void setOutputLowerLimit(BRIGHTNESS_TYPE lowerLimit);			// Sets the lower limit of the MultiLED.
+	void setOutputUpperLimit(BRIGHTNESS_TYPE upperLimit);			// Sets the upper limit of the MultiLED.
+	virtual void setUnscaledBrightness(BRIGHTNESS_TYPE brightness);	// Sets the brightness to a certain value.
 
 	// Getters:
 
-	BRIGHTNESS_TYPE getOutputLowerLimit();								// Returns the lower limit.
-	BRIGHTNESS_TYPE getOutputUpperLimit();								// Returns the upper limit.
+	BRIGHTNESS_TYPE getOutputLowerLimit();							// Returns the lower limit.
+	BRIGHTNESS_TYPE getOutputUpperLimit();							// Returns the upper limit.
 
 	virtual BRIGHTNESS_TYPE getUnscaledBrightness();				// Returns the value of the current brightness.
 	virtual BRIGHTNESS_TYPE getMaxUnscaledBrightness();				// Returns the maximal value to what the unscaled brightness can be set.

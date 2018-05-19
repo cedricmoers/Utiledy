@@ -67,15 +67,15 @@ GammaLED::GammaLED(char* identificator,
 	//Print a summary of the LED.
 	DEBUG_PRINT_HEADER();
 	DEBUG_PRINT_F("Created new LED with ID: \"");
-	DEBUG_PRINT(this->ID);
+	DEBUG_PRINT(getID());
 	DEBUG_PRINT_F("\" initialized on pin: ");
-	DEBUG_PRINT(this->pin);
+	DEBUG_PRINT(getPin());
 	DEBUG_PRINT_F("with gamma correction ");
 	DEBUG_PRINT(gammaCorrectionEnabled ? "enabled" : "disabled");
 	DEBUG_PRINT_F(", limited between:");
-	DEBUG_PRINT(lowerLimit);
+	DEBUG_PRINT(getOutputLowerLimit());
 	DEBUG_PRINT_F(" and ");
-	DEBUG_PRINT(upperLimit);
+	DEBUG_PRINT(getOutputUpperLimit());
 	DEBUG_PRINTLN_F(".")
 }
 
@@ -96,8 +96,6 @@ void GammaLED::setPin(uint8_t ledPin) {
 
 	this->pin = ledPin;
 	pinMode(this->pin, OUTPUT);
-	digitalWrite(this->pin, LOW);
-
 }
 
 //Enable/Disable the gamma correction.
@@ -151,7 +149,7 @@ void GammaLED::setLowPassFilterSmoothing(float smoothing)
 void GammaLED::setOutputLowerLimit(BRIGHTNESS_TYPE newLowerLimit) {
 	if (newLowerLimit >= getOutputUpperLimit()) {
 		DEBUG_PRINT_HEADER();
-		DEBUG_PRINTLN_F("ERR::Lower limit must be smaller than upper limit. Keeping previous value.");
+		DEBUG_PRINTLN_F("ERR::Lower limit must be smaller than upper limit. Keeping current value.");
 		return;
 	}
 
@@ -184,14 +182,29 @@ void GammaLED::setOutputUpperLimit(BRIGHTNESS_TYPE newUpperLimit) {
 
 //Sets the brightness of the LED.
 void GammaLED::setUnscaledBrightness(BRIGHTNESS_TYPE brightness) {
-	if (brightness != getUnscaledBrightness()) {
-		DEBUG_PRINT_HEADER();
-		DEBUG_PRINT_F("Setting the unscaled brightness: ");
-		DEBUG_PRINT(brightness);
-		DEBUG_PRINTLN_F(".");
+		
+	DEBUG_PRINT_HEADER();
+	DEBUG_PRINT_F("Setting the unscaled brightness to: ");
+	DEBUG_PRINT(brightness);
+	DEBUG_PRINTLN_F(".");
 
-		this->unscaledBrightness = brightness;
+	if (brightness > getMaxUnscaledBrightness()) {
+		DEBUG_PRINT_HEADER();
+		DEBUG_PRINT_F("ERR::The brightness must be lower than ");
+		DEBUG_PRINT(getMaxUnscaledBrightness());
+		DEBUG_PRINTLN_F(" setting it to that value.");
+		this->unscaledBrightness = getMaxUnscaledBrightness();
 	}
+
+	if (brightness < getMinUnscaledBrightness()) {
+		DEBUG_PRINT_HEADER();
+		DEBUG_PRINT_F("ERR::The brightness must be higher than ");
+		DEBUG_PRINT(getMinUnscaledBrightness());
+		DEBUG_PRINTLN_F(" setting it to that value.");
+		this->unscaledBrightness = getMinUnscaledBrightness();
+	}
+
+	this->unscaledBrightness = brightness;
 }
 
 #pragma endregion
@@ -352,9 +365,9 @@ BRIGHTNESS_TYPE GammaLED::unscaledToFinalBrightness(BRIGHTNESS_TYPE unscaledBrig
 {
 	DEBUG_PRINT_HEADER();
 	DEBUG_PRINTLN_F("Calculating Filter:");
-	DEBUG_PARAMETER("previousEndBrightness", this->previousEndBrightness);
-	DEBUG_PARAMETER("smoothing", getLowPassFilterSmoothing());
-	DEBUG_PARAMETER("inputBrightness", unscaledBrightness);
+	DEBUG_PARAMETER("PreviousEndBrightness", this->previousEndBrightness);
+	DEBUG_PARAMETER("Smoothing", getLowPassFilterSmoothing());
+	DEBUG_PARAMETER("Input Brightness", unscaledBrightness);
 
 	float endBrightness;
 
@@ -367,23 +380,17 @@ BRIGHTNESS_TYPE GammaLED::unscaledToFinalBrightness(BRIGHTNESS_TYPE unscaledBrig
 
 	this->previousEndBrightness = endBrightness;
 
-	DEBUG_PARAMETER("filtered", endBrightness);
-
-	DEBUG_PRINT_HEADER();
-	DEBUG_PRINT_F("Mapping value: ");
-	DEBUG_PRINT(endBrightness);
-	DEBUG_PRINTLN_F(".");
+	DEBUG_PARAMETER("Filtered", endBrightness);
 
 	BRIGHTNESS_TYPE finalBrightness = map((BRIGHTNESS_TYPE)round(endBrightness), BRIGHTNESS_TYPE_MIN, BRIGHTNESS_TYPE_MAX, brightnessLowerLimit, brightnessUpperLimit);
 
-	DEBUG_PRINT_HEADER();
-	DEBUG_PRINT_F("Gamma Correcting for value: ");
-	DEBUG_PRINT(finalBrightness);
-	DEBUG_PRINTLN_F(".");
+	DEBUG_PARAMETER("Limited", endBrightness);
 
 	if (getGammaCorrectionEnabled() == true) {
 		finalBrightness = gammaCorrectionLookupTable[finalBrightness];
 	}
+
+	DEBUG_PARAMETER("Corrected", endBrightness);
 
 	return finalBrightness;
 }
