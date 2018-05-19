@@ -1,17 +1,12 @@
 // Fader.h
 
-#include "c:\Users\Cedric\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266\Arduino.h"
+
 
 #ifndef _FADER_h
 #define _FADER_h
 #define FADEMODE_UP 1
 #define FADEMODE_DOWN 2
 #define FADEMODE_IDLE 0
-//#if defined(ARDUINO) && ARDUINO >= 100
-//	#include "arduino.h"
-//#else
-//	#include "WProgram.h"
-//#endif
 
 #ifndef _GAMMALED_h
 #include "GammaLED.h"

@@ -94,7 +94,7 @@ BRIGHTNESS_TYPE UltiLED::getMaxUnscaledBrightness()
 void UltiLED::setToSpark(BRIGHTNESS_TYPE intensity, BRIGHTNESS_TYPE average, unsigned long sparkUpdateInterval)
 {
 	setUnscaledBrightness(average);
-	setToSpark(intensity, average, sparkUpdateInterval);
+	setToSpark(intensity, sparkUpdateInterval);
 }
 
 void UltiLED::setToSpark(BRIGHTNESS_TYPE intensity, unsigned long sparkUpdateInterval)

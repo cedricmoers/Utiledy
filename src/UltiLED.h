@@ -1,15 +1,8 @@
 // UltiLED.h
 
-#include "c:\Users\Cedric\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266\Arduino.h"
 
 #ifndef _ULTILED_h
 #define _ULTILED_h
-
-//#if defined(ARDUINO) && ARDUINO >= 100
-//	#include "arduino.h"
-//#else
-//	#include "WProgram.h
-//#endif
 
 #define ULTILEDMODE_NORMAL 0
 #define ULTILEDMODE_BLINKER 1

@@ -1,16 +1,9 @@
 // Blinker.h
 
-#include "c:\Users\Cedric\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266\Arduino.h"
+
 
 #ifndef _BLINKER_h
 #define _BLINKER_h
-
-//#if defined(ARDUINO) && ARDUINO >= 100
-//	#include "arduino.h"
-//#else
-//	#include "WProgram.h
-//#endif
-//
 
 #ifndef _FADER_h
 #include "Fader.h"
