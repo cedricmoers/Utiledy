@@ -12,6 +12,7 @@ Sparkler::Sparkler(
 {
 	setIntensity(0);
 	setSparkInterval(0);
+	setSparkedBrightness(0);
 }
 
 
@@ -26,7 +27,7 @@ unsigned long Sparkler::getSparkInterval()
 	return this->sparkInterval;
 }
 
-void Sparkler::setIntensity(BRIGHTNESS_TYPE value)
+inline void Sparkler::setIntensity(BRIGHTNESS_TYPE value)
 {
 	BRIGHTNESS_TYPE intensityMin = 0;
 	BRIGHTNESS_TYPE intensityMax = BRIGHTNESS_TYPE_MAX / 2;
@@ -34,7 +35,7 @@ void Sparkler::setIntensity(BRIGHTNESS_TYPE value)
 	if (value <= intensityMin) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("Spark intensity of zero will have no effect, writing the value anyway, but constant mode would be better in this case.");
-		
+
 		this->intensity = intensityMin;
 	}
 	else if (value > intensityMax / 2) {
@@ -55,10 +56,10 @@ void Sparkler::setIntensity(BRIGHTNESS_TYPE value)
 	}
 
 	// Update the brightness.
-	setUnscaledBrightness(getUnscaledBrightness());
+	setBrightness(getBrightness());
 
-	DEBUG_PARAMETER("Unscaled Min: ", getMinUnscaledBrightness());
-	DEBUG_PARAMETER("Unscaled Max: ", getMaxUnscaledBrightness());
+	DEBUG_PARAMETER("Unscaled Min: ", getMinBrightness());
+	DEBUG_PARAMETER("Unscaled Max: ", getMaxBrightness());
 }
 
 void Sparkler::setSparkInterval(unsigned long updateInterval)
@@ -76,24 +77,24 @@ void Sparkler::setSparkedBrightness(BRIGHTNESS_TYPE value)
 	this->sparkedBrightness = value;
 }
 
-void Sparkler::setUnscaledBrightness(BRIGHTNESS_TYPE value)
+void Sparkler::setBrightness(BRIGHTNESS_TYPE value)
 {
-	if (value < getMinUnscaledBrightness()) {
+	if (value < getMinBrightness()) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINT_F("The given brightness with the current intensity will result in a brightness below zero. Changing the brightness to ");
 		DEBUG_PRINT(getIntensity());
 		DEBUG_PRINTLN_F(" to prevent this.");
-		GammaLED::setUnscaledBrightness(getMinUnscaledBrightness());
+		GammaLED::setBrightness(getMinBrightness());
 	}
-	else if (value > getMaxUnscaledBrightness()) {
+	else if (value > getMaxBrightness()) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINT_F("The given brightness with the intensity will result in a brightness above BRIGHTNESS_TYPE_MAX. Changing the brightness to ");
 		DEBUG_PRINT(BRIGHTNESS_TYPE_MAX - getIntensity());
 		DEBUG_PRINTLN_F(" to prevent this.");
-		GammaLED::setUnscaledBrightness(getMaxUnscaledBrightness());
+		GammaLED::setBrightness(getMaxBrightness());
 	}
 	else {
-		GammaLED::setUnscaledBrightness(value);
+		GammaLED::setBrightness(value);
 	}
 }
 
@@ -102,17 +103,17 @@ BRIGHTNESS_TYPE Sparkler::getSparkedBrightness()
 	return this->sparkedBrightness;
 }
 
-BRIGHTNESS_TYPE Sparkler::getUnscaledBrightness()
+BRIGHTNESS_TYPE Sparkler::getBrightness()
 {
 	return getSparkedBrightness();
 }
 
-BRIGHTNESS_TYPE Sparkler::getMinUnscaledBrightness()
+BRIGHTNESS_TYPE Sparkler::getMinBrightness()
 {
 	return getIntensity();
 }
 
-BRIGHTNESS_TYPE Sparkler::getMaxUnscaledBrightness()
+BRIGHTNESS_TYPE Sparkler::getMaxBrightness()
 {
 	return BRIGHTNESS_TYPE_MAX - getIntensity();
 }
@@ -129,9 +130,9 @@ BRIGHTNESS_TYPE Sparkler::update()
 
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINT_F("Generating new spark::B:");
-		DEBUG_PRINT(getUnscaledBrightness());
+		DEBUG_PRINT(getBrightness());
 
-		BRIGHTNESS_TYPE finalBrightness = (BRIGHTNESS_TYPE) ((long)GammaLED::getUnscaledBrightness() + random(-(long)getIntensity(), (long)getIntensity()));
+		BRIGHTNESS_TYPE finalBrightness = (BRIGHTNESS_TYPE) ((long)GammaLED::getBrightness() + random(-(long)getIntensity(), (long)getIntensity()));
 
 		DEBUG_PRINT_F(", A:");
 		DEBUG_PRINTLN(finalBrightness);

@@ -36,7 +36,7 @@ public :
 	void setHighTime(uint16_t onTime);
 	void setLowTime(uint16_t offTime);
 	void setOffset(uint16_t offset);
-	void setUnscaledBrightness(BRIGHTNESS_TYPE brightness) override;
+	void setBrightness(BRIGHTNESS_TYPE brightness) override;
 	void setHighBrightness(BRIGHTNESS_TYPE brightness);
 	void setLowBrightness(BRIGHTNESS_TYPE brightness);
 
@@ -50,9 +50,9 @@ public :
 	uint16_t getOffset();										//Returns the offset time of the led in blink mode.
 	BRIGHTNESS_TYPE getHighBrightness();
 	BRIGHTNESS_TYPE getLowBrightness();
-	BRIGHTNESS_TYPE getUnscaledBrightness() override;
-	BRIGHTNESS_TYPE getMinUnscaledBrightness() override;
-	BRIGHTNESS_TYPE getMaxUnscaledBrightness() override;
+	BRIGHTNESS_TYPE getBrightness() override;
+	BRIGHTNESS_TYPE getMinBrightness() override;
+	BRIGHTNESS_TYPE getMaxBrightness() override;
 
 
 
@@ -67,7 +67,7 @@ public :
 	bool isPaused();
 
 	//Methods
-	BRIGHTNESS_TYPE update();
+	BRIGHTNESS_TYPE update() override;
 	void start();
 	void pause();
 	void stop();
@@ -80,18 +80,24 @@ public :
 
 private :
 
-	uint8_t			mode = BLINKMODE_STOPPED;
+	uint8_t			mode;
 
 	void setOutputState(bool state);
+
+	BRIGHTNESS_TYPE lowBrightness;
 
 	uint16_t		highTime;
 	uint16_t		lowTime;
 	uint16_t		offset;
-	bool			offsetInProgress;
 
 	bool			state;
 
-	BRIGHTNESS_TYPE lowBrightness;
+	void setOffsetInProgress(bool value) { this->offsetInProgress = value; }
+	bool isOffsetInProgress() { return this->offsetInProgress; }
+	bool offsetInProgress;
 
+	void setPreviousToggleTimestamp(unsigned long value) { this->previousToggleTimestamp = value; }
+	unsigned long getPreviousToggleTimestamp() { return this->previousToggleTimestamp; }
 	unsigned long previousToggleTimestamp;
+
 };

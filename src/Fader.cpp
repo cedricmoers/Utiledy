@@ -13,6 +13,7 @@ Fader::Fader(
 	:
 	GammaLED(identificator, ledPin, gammaCorrection, lowerLimit, lowerLimit)
 {
+	setCurrentFadeStartBrightness(0);
 	setCurrentFadeEndBrightness(0);
 	setCurrentFadeStartTime(0);
 	setContinuouslyFadeWaving(false);
@@ -31,21 +32,21 @@ void Fader::fadeToValue(uint16_t time, BRIGHTNESS_TYPE brightness) {
 	DEBUG_PRINT(time);
 	DEBUG_PRINTLN_F("ms.");
 
-	if (brightness == getUnscaledBrightness()) {
+	if (brightness == GammaLED::getBrightness()) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINT_F("Brightness is already at that value.");
 
 		setFadeMode(FADEMODE_IDLE);
 		return;
 	}
-	else if (brightness > getUnscaledBrightness()) {
+	else if (brightness > GammaLED::getBrightness()) {
 		setFadeMode(FADEMODE_UP);
 	}
-	else if (brightness < getUnscaledBrightness()) {
+	else if (brightness < GammaLED::getBrightness()) {
 		setFadeMode(FADEMODE_DOWN);
 	}
 
-	setCurrentFadeStartBrightness(getUnscaledBrightness());
+	setCurrentFadeStartBrightness(GammaLED::getBrightness());
 	setCurrentFadeEndBrightness(brightness);
 	setCurrentFadeStartTime(millis());
 	setMinToMaxTime(time);
@@ -53,17 +54,17 @@ void Fader::fadeToValue(uint16_t time, BRIGHTNESS_TYPE brightness) {
 
 void Fader::fadeToMax(uint16_t time)
 {
-	fadeToValue(time, getMaxUnscaledBrightness());
+	fadeToValue(time, getMaxBrightness());
 }
 
 void Fader::fadeToMin(uint16_t time)
 {
-	fadeToValue(time, getMinUnscaledBrightness());
+	fadeToValue(time, getMinBrightness());
 }
 
 void Fader::fadeToggle(uint16_t time)
 {
-	if (getUnscaledBrightness() > getMinUnscaledBrightness()) {
+	if (getBrightness() > getMinBrightness()) {
 		fadeToMin(time);
 	}
 	else {
@@ -130,7 +131,7 @@ bool Fader::isFadeWaving() {
 
 bool Fader::isContinuouslyFadeWaving() {
 
-	return this->fadeWaveContinuous;
+	return this->continuouslyFadeWaving;
 }
 
 
@@ -145,7 +146,7 @@ void Fader::setContinuouslyFadeWaving(bool state)
 		setFadeWavesLeft(0);
 	}
 
-	this->fadeWaveContinuous = state;
+	this->continuouslyFadeWaving = state;
 }
 
 
@@ -164,7 +165,7 @@ BRIGHTNESS_TYPE Fader::update() {
 		unsigned int units;
 
 		if (getMinToMaxTime() != 0.0) {
-			float avgMinToMaxSpeed = ((float)getMaxUnscaledBrightness() - (float)getMinUnscaledBrightness()) / (float)getMinToMaxTime(); //   units/ms
+			float avgMinToMaxSpeed = ((float)getMaxBrightness() - (float)getMinBrightness()) / (float)getMinToMaxTime(); //   units/ms
 			units = (unsigned int)(avgMinToMaxSpeed * (float)elapsed);
 		}
 		else {
@@ -176,12 +177,12 @@ BRIGHTNESS_TYPE Fader::update() {
 
 			long newBrightness = (long)getCurrentFadeStartBrightness() + (long)units;
 
-			if (newBrightness >= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime() || newBrightness >= (long)getMaxUnscaledBrightness()) {
+			if (newBrightness >= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime() || newBrightness >= (long)getMaxBrightness()) {
 				DEBUG_PRINT_HEADER();
 				DEBUG_PRINT_F("Desired brightness reached by increasing, ");
 				DEBUG_PRINTLN_F(".");
 
-				setUnscaledBrightness(getCurrentFadeEndBrightness());
+				setBrightness(getCurrentFadeEndBrightness());
 
 				setFadeMode(FADEMODE_IDLE);
 
@@ -191,7 +192,7 @@ BRIGHTNESS_TYPE Fader::update() {
 				}
 			}
 			else {
-				setUnscaledBrightness(newBrightness);
+				setBrightness(newBrightness);
 			}
 		}
 
@@ -200,12 +201,12 @@ BRIGHTNESS_TYPE Fader::update() {
 
 			long newBrightness = (long)getCurrentFadeStartBrightness() - (long)units;
 
-			if (newBrightness <= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime() || newBrightness <= (long)getMinUnscaledBrightness()) {
+			if (newBrightness <= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime() || newBrightness <= (long)getMinBrightness()) {
 				DEBUG_PRINT_HEADER();
 				DEBUG_PRINT_F("Desired brightness reached by decreasing, ");
 				DEBUG_PRINTLN_F(".");
 
-				setUnscaledBrightness(getCurrentFadeEndBrightness());
+				setBrightness(getCurrentFadeEndBrightness());
 
 				setFadeMode(FADEMODE_IDLE);
 
@@ -214,7 +215,7 @@ BRIGHTNESS_TYPE Fader::update() {
 				}
 			}
 			else {
-				setUnscaledBrightness(newBrightness);
+				setBrightness(newBrightness);
 			}
 		}
 	}

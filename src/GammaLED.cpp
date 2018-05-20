@@ -14,7 +14,9 @@ GammaLED::GammaLED(char* identificator,
 
 	setID(identificator); //Must be first for debugging purposes.
 	setPin(ledPin);
-	setGammaCorrectionEnabled(gammaCorrection);
+	setGammaCorrectionState(gammaCorrection);
+	setBrightness(0);
+	enable();
 
 	//Check if upper limit is greater than the minimum of the brightness type
 	if (upperLimit <= BRIGHTNESS_TYPE_MIN) {
@@ -73,7 +75,7 @@ GammaLED::GammaLED(char* identificator,
 	DEBUG_PRINT_F("\" initialized on pin: ");
 	DEBUG_PRINT(getPin());
 	DEBUG_PRINT_F("with gamma correction ");
-	DEBUG_PRINT(gammaCorrectionEnabled ? "enabled" : "disabled");
+	DEBUG_PRINT(isGammaCorrectionEnabled() ? "enabled" : "disabled");
 	DEBUG_PRINT_F(", limited between:");
 	DEBUG_PRINT(getOutputLowerLimit());
 	DEBUG_PRINT_F(" and ");
@@ -101,7 +103,7 @@ void GammaLED::setPin(uint8_t ledPin) {
 }
 
 //Enable/Disable the gamma correction.
-void GammaLED::setGammaCorrectionEnabled(bool state) {
+void GammaLED::setGammaCorrectionState(bool state) {
 
 	DEBUG_PRINT_HEADER();
 	DEBUG_PRINT_F("Setting Gamma Correction to ");
@@ -126,7 +128,7 @@ void GammaLED::setOutputLowerLimit(BRIGHTNESS_TYPE newLowerLimit) {
 		DEBUG_PRINT(newLowerLimit);
 		DEBUG_PRINTLN_F(".");
 
-		this->brightnessLowerLimit = newLowerLimit;
+		this->outputLowerLimit = newLowerLimit;
 	}
 }
 
@@ -143,35 +145,37 @@ void GammaLED::setOutputUpperLimit(BRIGHTNESS_TYPE newUpperLimit) {
 		DEBUG_PRINT_F("Setting upper brightness limit to: ");
 		DEBUG_PRINT(newUpperLimit);
 		DEBUG_PRINTLN_F(".");
-		this->brightnessUpperLimit = newUpperLimit;
+		this->outputUpperLimit = newUpperLimit;
 	}
 }
 
 //Sets the brightness of the LED.
-void GammaLED::setUnscaledBrightness(BRIGHTNESS_TYPE brightness) {
+void GammaLED::setBrightness(BRIGHTNESS_TYPE brightness) {
 		
 	DEBUG_PRINT_HEADER();
 	DEBUG_PRINT_F("Setting the unscaled brightness to: ");
 	DEBUG_PRINT(brightness);
 	DEBUG_PRINTLN_F(".");
 
-	if (brightness > getMaxUnscaledBrightness()) {
+	if (brightness > getMaxBrightness()) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINT_F("ERR::The brightness must be lower than ");
-		DEBUG_PRINT(getMaxUnscaledBrightness());
+		DEBUG_PRINT(getMaxBrightness());
 		DEBUG_PRINTLN_F(" setting it to that value.");
-		this->unscaledBrightness = getMaxUnscaledBrightness();
+		this->brightness = getMaxBrightness();
+		return;
 	}
 
-	if (brightness < getMinUnscaledBrightness()) {
+	if (brightness < getMinBrightness()) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINT_F("ERR::The brightness must be higher than ");
-		DEBUG_PRINT(getMinUnscaledBrightness());
+		DEBUG_PRINT(getMinBrightness());
 		DEBUG_PRINTLN_F(" setting it to that value.");
-		this->unscaledBrightness = getMinUnscaledBrightness();
+		this->brightness = getMinBrightness();
+		return;
 	}
 
-	this->unscaledBrightness = brightness;
+	this->brightness = brightness;
 }
 
 #pragma endregion
@@ -180,25 +184,25 @@ void GammaLED::setUnscaledBrightness(BRIGHTNESS_TYPE brightness) {
 
 //Returns the lower brightness limit.
 BRIGHTNESS_TYPE GammaLED::getOutputLowerLimit() {
-	return this->brightnessLowerLimit;
+	return this->outputLowerLimit;
 }
 
 //Returns the upper brightness limit.
 BRIGHTNESS_TYPE GammaLED::getOutputUpperLimit() {
-	return this->brightnessUpperLimit;
+	return this->outputUpperLimit;
 }
 
 //Returns the current uncorrected and unlimited brightness.
-BRIGHTNESS_TYPE GammaLED::getUnscaledBrightness(){
-	return this->unscaledBrightness;
+BRIGHTNESS_TYPE GammaLED::getBrightness(){
+	return this->brightness;
 }
 
-BRIGHTNESS_TYPE GammaLED::getMaxUnscaledBrightness()
+BRIGHTNESS_TYPE GammaLED::getMaxBrightness()
 {
 	return BRIGHTNESS_TYPE_MAX;
 }
 
-BRIGHTNESS_TYPE GammaLED::getMinUnscaledBrightness()
+BRIGHTNESS_TYPE GammaLED::getMinBrightness()
 {
 	return BRIGHTNESS_TYPE_MIN;
 }
@@ -214,13 +218,13 @@ char * GammaLED::getID() {
 }
 
 //Returns the state of the gamma correction.
-bool GammaLED::getGammaCorrectionEnabled() {
+bool GammaLED::isGammaCorrectionEnabled() {
 	return this->gammaCorrectionEnabled;
 }
 
 //Indicates if the MultiLED is either fully on or dimmed.
-bool GammaLED::isShining() {
-	if (getUnscaledBrightness() > BRIGHTNESS_TYPE_MIN) {
+bool GammaLED::isLighted() {
+	if (getBrightness() > BRIGHTNESS_TYPE_MIN) {
 		return true;
 	}
 	else {
@@ -230,7 +234,7 @@ bool GammaLED::isShining() {
 
 //Indicates if the MultiLED is at its high limit.
 bool GammaLED::isMax() {
-	if (getUnscaledBrightness() >= getMaxUnscaledBrightness()) {
+	if (getBrightness() >= getMaxBrightness()) {
 		return true;
 	}
 	else {
@@ -240,7 +244,7 @@ bool GammaLED::isMax() {
 
 //Indicates if the MultiLED is at its low limit.
 bool GammaLED::isMin() {
-	if (getUnscaledBrightness() <= getMaxUnscaledBrightness()) {
+	if (getBrightness() <= getMaxBrightness()) {
 		return true;
 	}
 	else {
@@ -267,10 +271,20 @@ BRIGHTNESS_TYPE GammaLED::update() {
 	DEBUG_PRINT_HEADER();
 	DEBUG_PRINTLN_F("Updating LED.");
 
-	return unscaledToFinalBrightness(getUnscaledBrightness());
+	return unscaledToFinalBrightness(getBrightness());
 
 	DEBUG_PRINT_HEADER();
 	DEBUG_PRINTLN_F("Done Updating LED.");
+}
+
+void GammaLED::updateAndWrite()
+{
+	analogWrite(getPin(), update());
+}
+
+void GammaLED::write()
+{
+	analogWrite(getPin(), getBrightness());
 }
 
 //Increase the current brightness by the given amount.
@@ -278,17 +292,17 @@ void GammaLED::increaseBrightness(BRIGHTNESS_TYPE amount) {
 
 	//Check if the amount is not greater than the margin that is left above the current value.
 	//This way of checking makes casting unnecessary.
-	if (amount >= (BRIGHTNESS_TYPE_MAX - getUnscaledBrightness())) {
+	if (amount >= (BRIGHTNESS_TYPE_MAX - getBrightness())) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("Brightness set to maximum.");
-		setUnscaledBrightness(BRIGHTNESS_TYPE_MAX);
+		setBrightness(BRIGHTNESS_TYPE_MAX);
 	}
 	else {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINT_F("Increasing brightness by ");
 		DEBUG_PRINT(amount);
 		DEBUG_PRINTLN_F(".");
-		setUnscaledBrightness(getUnscaledBrightness() + amount);
+		setBrightness(getBrightness() + amount);
 	}
 }
 
@@ -297,17 +311,17 @@ void GammaLED::decreaseBrightness(BRIGHTNESS_TYPE amount) {
 
 	//Check if the amount is not greater than the margin that is left under the current value.
 	//This way of checking makes casting unnecessary.
-	if (amount >= (getUnscaledBrightness() - BRIGHTNESS_TYPE_MIN)) {
+	if (amount >= (getBrightness() - BRIGHTNESS_TYPE_MIN)) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("Brightness set to minimum.");
-		setUnscaledBrightness(BRIGHTNESS_TYPE_MIN);
+		setBrightness(BRIGHTNESS_TYPE_MIN);
 	}
 	else {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINT_F("Decreasing brightness by ");
 		DEBUG_PRINT(amount);
 		DEBUG_PRINTLN_F(".");
-		setUnscaledBrightness(getUnscaledBrightness() - amount);
+		setBrightness(getBrightness() - amount);
 	}
 }
 
@@ -330,11 +344,11 @@ BRIGHTNESS_TYPE GammaLED::unscaledToFinalBrightness(BRIGHTNESS_TYPE unscaledBrig
 
 	DEBUG_PARAMETER("Filtered", finalBrightness);
 
-	finalBrightness = map((BRIGHTNESS_TYPE)round(finalBrightness), BRIGHTNESS_TYPE_MIN, BRIGHTNESS_TYPE_MAX, brightnessLowerLimit, brightnessUpperLimit);
+	finalBrightness = map((BRIGHTNESS_TYPE)round(finalBrightness), BRIGHTNESS_TYPE_MIN, BRIGHTNESS_TYPE_MAX, getOutputLowerLimit(), getOutputUpperLimit());
 
 	DEBUG_PARAMETER("Limited", finalBrightness);
 
-	if (getGammaCorrectionEnabled() == true) {
+	if (isGammaCorrectionEnabled() == true) {
 		finalBrightness = gammaCorrectionLookupTable[finalBrightness];
 	}
 
@@ -346,7 +360,7 @@ BRIGHTNESS_TYPE GammaLED::unscaledToFinalBrightness(BRIGHTNESS_TYPE unscaledBrig
 void GammaLED::enable() {
 	DEBUG_PRINT_HEADER();
 	DEBUG_PRINTLN_F("Enabling LED output.");
-	this->enabled = false;
+	this->enabled = true;
 }
 
 #pragma endregion

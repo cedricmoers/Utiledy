@@ -432,25 +432,25 @@ public:
 
 	void setID(char* identificator);								// Sets the ID of the LED for logging purposes.
 	void setPin(uint8_t ledPin);									// Sets the output pin to a new value.
-	void setGammaCorrectionEnabled(bool state);						// Sets the gamma correction to on/off.
+	void setGammaCorrectionState(bool state);						// Sets the gamma correction to on/off.
 	void setOutputLowerLimit(BRIGHTNESS_TYPE lowerLimit);			// Sets the lower limit of the MultiLED.
 	void setOutputUpperLimit(BRIGHTNESS_TYPE upperLimit);			// Sets the upper limit of the MultiLED.
-	virtual void setUnscaledBrightness(BRIGHTNESS_TYPE brightness);	// Sets the brightness to a certain value.
+	virtual void setBrightness(BRIGHTNESS_TYPE brightness);	// Sets the brightness to a certain value.
 
 	// Getters:
 
 	BRIGHTNESS_TYPE getOutputLowerLimit();							// Returns the lower limit.
 	BRIGHTNESS_TYPE getOutputUpperLimit();							// Returns the upper limit.
 
-	virtual BRIGHTNESS_TYPE getUnscaledBrightness();				// Returns the value of the current brightness.
-	virtual BRIGHTNESS_TYPE getMaxUnscaledBrightness();				// Returns the maximal value to what the unscaled brightness can be set.
-	virtual BRIGHTNESS_TYPE getMinUnscaledBrightness();				// Returns the maximal value to what the unscaled brightness can be set.
+	virtual BRIGHTNESS_TYPE getBrightness();				// Returns the value of the current brightness.
+	virtual BRIGHTNESS_TYPE getMaxBrightness();				// Returns the maximal value to what the unscaled brightness can be set.
+	virtual BRIGHTNESS_TYPE getMinBrightness();				// Returns the maximal value to what the unscaled brightness can be set.
 
 	uint8_t			getPin();										// Returns the output pin number.
-	bool			getGammaCorrectionEnabled();					// Returns the state of the gamma correction.
+	bool			isGammaCorrectionEnabled();					// Returns the state of the gamma correction.
 	char *			getID();										// Returns the identificator of the led.
 																	   
-	bool			isShining();									// Indicates if the LED is either fully on or dimmed.
+	bool			isLighted();									// Indicates if the LED is either fully on or dimmed.
 	bool			isMax();										// Indicates if the LED is at its high limit.
 	bool			isMin();										// Indicates if the LED is at its low limit.
 	bool			isEnabled();									// Indicates if the LED is enabled.
@@ -458,7 +458,9 @@ public:
 
 	// Methods:
 
-	BRIGHTNESS_TYPE update();
+	virtual BRIGHTNESS_TYPE update();
+	void updateAndWrite();
+	void write();
 
 	void increaseBrightness(BRIGHTNESS_TYPE amount);				// Increase the current brightness by the given amount.
 	void decreaseBrightness(BRIGHTNESS_TYPE amount);				// Decrease the current brightness by the given amount.
@@ -466,27 +468,23 @@ public:
 	void enable();													// Enable the LED output.
 	void disable();													// Disable the LED output.
 
-	BRIGHTNESS_TYPE unscaledToFinalBrightness(BRIGHTNESS_TYPE unscaledBrightness);
-
-
-
-
-
 
 private:
 
+	BRIGHTNESS_TYPE unscaledToFinalBrightness(BRIGHTNESS_TYPE unscaledBrightness);
+
 	// Fields
-	char *			ID = "Led";
+	char *			ID;
 	uint8_t			pin;
 
-	BRIGHTNESS_TYPE brightnessLowerLimit;
-	BRIGHTNESS_TYPE brightnessUpperLimit;
+	BRIGHTNESS_TYPE outputLowerLimit;
+	BRIGHTNESS_TYPE outputUpperLimit;
 
-	BRIGHTNESS_TYPE unscaledBrightness = 0;
+	BRIGHTNESS_TYPE brightness;
 
 	bool			gammaCorrectionEnabled;
 
-	bool			enabled = true;
+	bool			enabled;
 };
 
 

@@ -31,9 +31,7 @@ public:
 
 
 	// Functions
-	BRIGHTNESS_TYPE update();
-
-	BRIGHTNESS_TYPE update(BRIGHTNESS_TYPE value);
+	BRIGHTNESS_TYPE update() override;
 
 	void fadeToValue(uint16_t time, BRIGHTNESS_TYPE brightness);		//Fade the led to a given value, within the given time.
 	void fadeToMax(uint16_t time);										//Fade the led to fully on within the given time.
@@ -51,7 +49,6 @@ public:
 	bool isFadeWaving();												// Indicates if the fader is fade waving.
 	bool isContinuouslyFadeWaving();
 
-	void setFadeInProgress(bool state);
 	void setContinuouslyFadeWaving(bool state);
 
 	void setCurrentFadeEndBrightness(BRIGHTNESS_TYPE brightness);
@@ -65,8 +62,6 @@ public:
 	void setFadeWavesLeft(uint16_t numberOfWaves);
 	uint16_t getFadeWavesLeft();
 
-
-
 	void setMinToMaxTime(unsigned long value);
 	unsigned long getMinToMaxTime();
 
@@ -74,15 +69,16 @@ private:
 
 	// Fields
 
+	uint8_t fadeMode;
 	void setFadeMode(uint8_t value);
 
-	uint8_t fadeMode;
+	bool continuouslyFadeWaving;
 
-	bool fadeWaveContinuous = false;
 	uint16_t fadeWavesLeft = 0;
+
 	BRIGHTNESS_TYPE currentFadeEndBrightness;
 	BRIGHTNESS_TYPE currentFadeStartBrightness;
+
 	unsigned long currentFadeStartTime;
 	unsigned long minToMaxTime;
-
 };

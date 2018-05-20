@@ -32,10 +32,10 @@ public:
 		BRIGHTNESS_TYPE lowerLimit /*= BRIGHTNESS_TYPE_MIN*/,
 		BRIGHTNESS_TYPE upperLimit /*= BRIGHTNESS_TYPE_MAX*/);
 
-	void setUnscaledBrightness(BRIGHTNESS_TYPE value) override;
-	BRIGHTNESS_TYPE getUnscaledBrightness() override;
-	BRIGHTNESS_TYPE getMinUnscaledBrightness() override;
-	BRIGHTNESS_TYPE getMaxUnscaledBrightness() override;
+	void setBrightness(BRIGHTNESS_TYPE value) override;
+	BRIGHTNESS_TYPE getBrightness() override;
+	BRIGHTNESS_TYPE getMinBrightness() override;
+	BRIGHTNESS_TYPE getMaxBrightness() override;
 
 	void setToSpark(BRIGHTNESS_TYPE intensity, BRIGHTNESS_TYPE average, unsigned long sparkUpdateInterval);
 	void setToSpark(BRIGHTNESS_TYPE intensity, unsigned long sparkUpdateInterval);
@@ -50,7 +50,7 @@ public:
 	void setMode(uint8_t value);
 	uint8_t getMode();
 
-	BRIGHTNESS_TYPE update();
+	BRIGHTNESS_TYPE update() override;
 
 private:
 

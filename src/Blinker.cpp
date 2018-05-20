@@ -17,6 +17,13 @@ Blinker::Blinker(
 	setLowTime(500);
 	setOffset(0);
 
+	setOutputState(false);
+
+	this->mode = BLINKMODE_STOPPED;
+
+	setPreviousToggleTimestamp(0);
+	setOffsetInProgress(true);
+
 	reset();
 }
 
@@ -35,22 +42,22 @@ uint16_t Blinker::getOffset() {
 
 BRIGHTNESS_TYPE Blinker::getHighBrightness() {
 	//return this->highBrightness;
-	return GammaLED::getUnscaledBrightness();
+	return GammaLED::getBrightness();
 }
 
 BRIGHTNESS_TYPE Blinker::getLowBrightness() {
 	return this->lowBrightness;
 }
 
-BRIGHTNESS_TYPE Blinker::getUnscaledBrightness()
+BRIGHTNESS_TYPE Blinker::getBrightness()
 {
 	BRIGHTNESS_TYPE blinkBrightness;
 
 	if (getMode() == BLINKMODE_STOPPED) {
-		blinkBrightness = 0;
+		blinkBrightness = BRIGHTNESS_TYPE_MIN;
 	}
-	else if (offsetInProgress) {
-		blinkBrightness = 0;
+	else if (isOffsetInProgress()) {
+		blinkBrightness = BRIGHTNESS_TYPE_MIN;
 	}
 	else if (isOn()) {
 		blinkBrightness = getHighBrightness();
@@ -62,12 +69,12 @@ BRIGHTNESS_TYPE Blinker::getUnscaledBrightness()
 	return blinkBrightness;
 }
 
-BRIGHTNESS_TYPE Blinker::getMinUnscaledBrightness()
+BRIGHTNESS_TYPE Blinker::getMinBrightness()
 {
-	return getLowBrightness();
+	return getLowBrightness() + 1;
 }
 
-BRIGHTNESS_TYPE Blinker::getMaxUnscaledBrightness()
+BRIGHTNESS_TYPE Blinker::getMaxBrightness()
 {
 	return BRIGHTNESS_TYPE_MAX;
 }
@@ -150,8 +157,9 @@ void Blinker::reset()
 {
 	DEBUG_PRINT_HEADER();
 	DEBUG_PRINTLN_F("Resetting blink timer.");
-	this->previousToggleTimestamp = millis();
-	this->offsetInProgress = true;
+	
+  	setPreviousToggleTimestamp(millis());
+	setOffsetInProgress(true);
 	setOutputState(true);
 
 	DEBUG_PRINT_HEADER();
@@ -201,7 +209,7 @@ void Blinker::setOffset(uint16_t offset) {
 	}
 }
 
-void Blinker::setUnscaledBrightness(BRIGHTNESS_TYPE brightness)
+void Blinker::setBrightness(BRIGHTNESS_TYPE brightness)
 {
 	setHighBrightness(brightness);
 }
@@ -224,7 +232,7 @@ void Blinker::setHighBrightness(BRIGHTNESS_TYPE brightness) {
 		DEBUG_PRINT(brightness);
 		DEBUG_PRINTLN_F(".");
 
-		GammaLED::setUnscaledBrightness(brightness);
+		GammaLED::setBrightness(brightness);
 	}
 }
 
@@ -233,12 +241,12 @@ void Blinker::setLowBrightness(BRIGHTNESS_TYPE brightness) {
 	if (brightness > BRIGHTNESS_TYPE_MAX || brightness < BRIGHTNESS_TYPE_MIN) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("Cannot set the off-brightness to a brightness higher than BRIGHTNESS_TYPE_MAX  or lower than BRIGHTNESS_TYPE_MIN. The value will be changed to BRIGHTNESS_TYPE_MIN.");
-		brightness = getMinUnscaledBrightness();
+		brightness = getMinBrightness();
 	}
 	if (brightness >= getHighBrightness()) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINTLN_F("The blink off-brightness should not be greater than or equal to the on-brightness. The value will be changed to BRIGHTNESS_TYPE_MIN.");
-		brightness = getMinUnscaledBrightness();
+		brightness = getMinBrightness();
 	}
 	if (getLowBrightness() != brightness) {
 		DEBUG_PRINT_HEADER();
@@ -266,23 +274,23 @@ void Blinker::setMode(uint8_t newMode)
 			DEBUG_PRINT_HEADER();
 			DEBUG_PRINTLN_F("Starting blinker.");
 
-			previousToggleTimestamp = now;
+			setPreviousToggleTimestamp(now);
 		}
 		else if (newMode == BLINKMODE_PAUSED && (isRunning())) {
 			DEBUG_PRINT_HEADER();
 			DEBUG_PRINTLN_F("Pausing blinker.");
 
-			previousToggleTimestamp = now;
+			setPreviousToggleTimestamp(now);
 		}
 		else if (newMode == BLINKMODE_STOPPED && (isRunning() || isPaused())) {
 			DEBUG_PRINT_HEADER();
 			DEBUG_PRINTLN_F("Stopping blinker.");
 
-			previousToggleTimestamp = now;
+			setPreviousToggleTimestamp(now);
 
-			setUnscaledBrightness(0);
+			setBrightness(0);
 			setOutputState(true);
-			offsetInProgress = true;
+			setOffsetInProgress(true);
 		}
 		else {
 			return;
@@ -303,17 +311,17 @@ BRIGHTNESS_TYPE Blinker::update()
 
 	if (getMode() == BLINKMODE_RUNNING) {
 
-		elapsed = now - previousToggleTimestamp;
+		elapsed = now - getPreviousToggleTimestamp();
 
-		if (this->offsetInProgress == true) {
+		if (isOffsetInProgress()) {
 			if (elapsed >= getOffset())
 			{
 				DEBUG_PRINT_HEADER();
 				DEBUG_PRINT_F("Started blinking the LED after an offset of: ");
 				DEBUG_PRINT(elapsed);
 				DEBUG_PRINTLN(" ms");
-				this->previousToggleTimestamp = now;
-				this->offsetInProgress = false;
+				setPreviousToggleTimestamp(now);
+				setOffsetInProgress(false);
 			}
 			else {
 				//Do nothing
@@ -327,7 +335,7 @@ BRIGHTNESS_TYPE Blinker::update()
 				DEBUG_PRINT(elapsed);
 				DEBUG_PRINTLN(" ms");
 				setOutputState(false);  // Turn it off
-				this->previousToggleTimestamp = now;
+				setPreviousToggleTimestamp(now);
 			}
 			else if (isOff() && (elapsed >= getLowTime())) {
 				DEBUG_PRINT_HEADER();
@@ -335,7 +343,7 @@ BRIGHTNESS_TYPE Blinker::update()
 				DEBUG_PRINT(elapsed);
 				DEBUG_PRINTLN(" ms");
 				setOutputState(true);  // Turn it on
-				this->previousToggleTimestamp = now;
+				setPreviousToggleTimestamp(now);
 			}
 			else {
 				//Do nothing

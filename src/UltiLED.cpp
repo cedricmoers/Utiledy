@@ -16,20 +16,20 @@ UltiLED::UltiLED(
 }
 
 
-void UltiLED::setUnscaledBrightness(BRIGHTNESS_TYPE value)
+void UltiLED::setBrightness(BRIGHTNESS_TYPE value)
 {
 	switch (getMode())
 	{
 	case ULTILEDMODE_BLINKER :
-		Blinker::setUnscaledBrightness(value);
+		Blinker::setBrightness(value);
 		break;
 
 	case ULTILEDMODE_NORMAL :
-		Fader::setUnscaledBrightness(value);
+		Fader::setBrightness(value);
 		break;
 
 	case ULTILEDMODE_SPARKLER : 
-		Sparkler::setUnscaledBrightness(value);
+		Sparkler::setBrightness(value);
 		break;
 
 	default:
@@ -37,54 +37,54 @@ void UltiLED::setUnscaledBrightness(BRIGHTNESS_TYPE value)
 	}
 }
 
-BRIGHTNESS_TYPE UltiLED::getUnscaledBrightness()
+BRIGHTNESS_TYPE UltiLED::getBrightness()
 {
 	switch (getMode())
 	{
 	case ULTILEDMODE_BLINKER:
-		return Blinker::getUnscaledBrightness();
+		return Blinker::getBrightness();
 
 	case ULTILEDMODE_NORMAL:
-		return Fader::getUnscaledBrightness();
+		return Fader::getBrightness();
 
 	case ULTILEDMODE_SPARKLER:
-		return Sparkler::getUnscaledBrightness();
+		return Sparkler::getBrightness();
 
 	default:
 		return 0;
 	}
 }
 
-BRIGHTNESS_TYPE UltiLED::getMinUnscaledBrightness()
+BRIGHTNESS_TYPE UltiLED::getMinBrightness()
 {
 	switch (getMode())
 	{
 	case ULTILEDMODE_BLINKER:
-		return Blinker::getMinUnscaledBrightness();
+		return Blinker::getMinBrightness();
 
 	case ULTILEDMODE_NORMAL:
-		return Fader::getMinUnscaledBrightness();
+		return Fader::getMinBrightness();
 
 	case ULTILEDMODE_SPARKLER:
-		return Sparkler::getMinUnscaledBrightness();
+		return Sparkler::getMinBrightness();
 
 	default:
 		return 0;
 	}
 }
 
-BRIGHTNESS_TYPE UltiLED::getMaxUnscaledBrightness()
+BRIGHTNESS_TYPE UltiLED::getMaxBrightness()
 {
 	switch (getMode())
 	{
 	case ULTILEDMODE_BLINKER:
-		return Blinker::getMaxUnscaledBrightness();
+		return Blinker::getMaxBrightness();
 
 	case ULTILEDMODE_NORMAL:
-		return Fader::getMaxUnscaledBrightness();
+		return Fader::getMaxBrightness();
 
 	case ULTILEDMODE_SPARKLER:
-		return Sparkler::getMaxUnscaledBrightness();
+		return Sparkler::getMaxBrightness();
 
 	default:
 		return 0;
@@ -93,7 +93,7 @@ BRIGHTNESS_TYPE UltiLED::getMaxUnscaledBrightness()
 
 void UltiLED::setToSpark(BRIGHTNESS_TYPE intensity, BRIGHTNESS_TYPE average, unsigned long sparkUpdateInterval)
 {
-	setUnscaledBrightness(average);
+	setBrightness(average);
 	setToSpark(intensity, sparkUpdateInterval);
 }
 
@@ -140,6 +140,7 @@ void UltiLED::setToBlink(BRIGHTNESS_TYPE highBrightness, BRIGHTNESS_TYPE lowBrig
 void UltiLED::setToBlink()
 {
 	setMode(ULTILEDMODE_BLINKER);
+	start();
 }
 
 void UltiLED::setMode(uint8_t value)
@@ -149,12 +150,12 @@ void UltiLED::setMode(uint8_t value)
 	DEBUG_PRINTLN(value);
 
 	// Get the value of the brightness before the mode change.
-	BRIGHTNESS_TYPE currentBrightness = getUnscaledBrightness();
+	BRIGHTNESS_TYPE currentBrightness = getBrightness();
 
 	this->mode = value;
 
 	// Set the value to the previous brightness.
-	setUnscaledBrightness(currentBrightness);
+	setBrightness(currentBrightness);
 }
 
 uint8_t UltiLED::getMode()

@@ -30,13 +30,13 @@ public:
 	void setIntensity(BRIGHTNESS_TYPE value);
 	void setSparkInterval(unsigned long updateInterval);			//Sets the update interval on which new sparks will be generated.
 	void setSparkedBrightness(BRIGHTNESS_TYPE value);
-	void setUnscaledBrightness(BRIGHTNESS_TYPE value) override;
+	void setBrightness(BRIGHTNESS_TYPE value) override;
 
 	BRIGHTNESS_TYPE getSparkedBrightness();
-	BRIGHTNESS_TYPE getUnscaledBrightness() override;				// Returns the value of the current brightness.
-	BRIGHTNESS_TYPE getMinUnscaledBrightness() override;
-	BRIGHTNESS_TYPE getMaxUnscaledBrightness() override;
-	BRIGHTNESS_TYPE update();
+	BRIGHTNESS_TYPE getBrightness() override;				// Returns the value of the current brightness.
+	BRIGHTNESS_TYPE getMinBrightness() override;
+	BRIGHTNESS_TYPE getMaxBrightness() override;
+	BRIGHTNESS_TYPE update() override;
 
 private:
 
@@ -45,6 +45,5 @@ private:
 
 	unsigned long sparkInterval;
 	unsigned long previousSparkTimestamp;
-
 
 };
