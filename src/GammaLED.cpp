@@ -5,10 +5,12 @@
 #include "GammaLED.h"
 
 GammaLED::GammaLED(char* identificator,
-	uint8_t ledPin, 
-	bool gammaCorrection /*= true*/, 
-	BRIGHTNESS_TYPE lowerLimit /*= BRIGHTNESS_TYPE_MIN*/, 
-	BRIGHTNESS_TYPE upperLimit /*= BRIGHTNESS_TYPE_MAX*/) {
+	uint8_t ledPin,
+	bool gammaCorrection /*= true*/,
+	BRIGHTNESS_TYPE lowerLimit /*= BRIGHTNESS_TYPE_MIN*/,
+	BRIGHTNESS_TYPE upperLimit /*= BRIGHTNESS_TYPE_MAX*/)
+	: filter()
+	{
 
 	setID(identificator); //Must be first for debugging purposes.
 	setPin(ledPin);
@@ -109,41 +111,6 @@ void GammaLED::setGammaCorrectionEnabled(bool state) {
 
 }
 
-void GammaLED::setLowPassFilterEnabled(bool state)
-{
-	DEBUG_PRINT_HEADER();
-	DEBUG_PRINT_F("Setting low pass filter state to: ");
-	DEBUG_PRINT(state ? "true" : "false");
-	DEBUG_PRINTLN_F(".");
-
-	this->lowPassFilterEnabled = state;
-}
-
-void GammaLED::setLowPassFilterSmoothing(float smoothing)
-{
-	DEBUG_PRINT_HEADER();
-	DEBUG_PRINT_F("Setting low pass filter state to: ");
-	DEBUG_PRINT(smoothing);
-	DEBUG_PRINTLN_F(".");
-
-	if (smoothing >= 1.0) {
-		DEBUG_PRINT_HEADER();
-		DEBUG_PRINT_F("ERR: The smoothing factor needs to be smaller than 1.0. Setting it to 0.999999");
-		DEBUG_PRINTLN_F(".");
-
-		this->lowPassFilterSmoothing = 0.999999;
-	}
-	else if (smoothing < 0.0) {
-		DEBUG_PRINT_HEADER();
-		DEBUG_PRINT_F("ERR: The smoothing factor needs to be greater than or equal to 0. Setting it to 0.");
-		DEBUG_PRINTLN_F(".");
-
-		this->lowPassFilterSmoothing = 0;
-	}
-	else {
-		this->lowPassFilterSmoothing = smoothing;
-	}
-}
 
 //Sets the lower limit brightness of the LED.
 void GammaLED::setOutputLowerLimit(BRIGHTNESS_TYPE newLowerLimit) {
@@ -251,16 +218,6 @@ bool GammaLED::getGammaCorrectionEnabled() {
 	return this->gammaCorrectionEnabled;
 }
 
-bool GammaLED::getLowPassFilterEnabled()
-{
-	return this->lowPassFilterEnabled;
-}
-
-float GammaLED::getLowPassFilterSmoothing()
-{
-	return this->lowPassFilterSmoothing;
-}
-
 //Indicates if the MultiLED is either fully on or dimmed.
 bool GammaLED::isShining() {
 	if (getUnscaledBrightness() > BRIGHTNESS_TYPE_MIN) {
@@ -364,33 +321,24 @@ void GammaLED::disable() {
 BRIGHTNESS_TYPE GammaLED::unscaledToFinalBrightness(BRIGHTNESS_TYPE unscaledBrightness)
 {
 	DEBUG_PRINT_HEADER();
-	DEBUG_PRINTLN_F("Calculating Filter:");
-	DEBUG_PARAMETER("PreviousEndBrightness", this->previousEndBrightness);
-	DEBUG_PARAMETER("Smoothing", getLowPassFilterSmoothing());
-	DEBUG_PARAMETER("Input Brightness", unscaledBrightness);
+	DEBUG_PRINTLN_F("Calculating final brightness.");
+	DEBUG_PARAMETER("Input", unscaledBrightness);
 
-	float endBrightness;
+	BRIGHTNESS_TYPE finalBrightness = unscaledBrightness;
 
-	if (getLowPassFilterEnabled()) {
-		endBrightness = (getLowPassFilterSmoothing() * this->previousEndBrightness) + ((1.0 - getLowPassFilterSmoothing()) * (float)unscaledBrightness);
-	}
-	else {
-		endBrightness = unscaledBrightness;
-	}
+	finalBrightness =	this->filter.update((float)unscaledBrightness);
 
-	this->previousEndBrightness = endBrightness;
+	DEBUG_PARAMETER("Filtered", finalBrightness);
 
-	DEBUG_PARAMETER("Filtered", endBrightness);
+	finalBrightness = map((BRIGHTNESS_TYPE)round(finalBrightness), BRIGHTNESS_TYPE_MIN, BRIGHTNESS_TYPE_MAX, brightnessLowerLimit, brightnessUpperLimit);
 
-	BRIGHTNESS_TYPE finalBrightness = map((BRIGHTNESS_TYPE)round(endBrightness), BRIGHTNESS_TYPE_MIN, BRIGHTNESS_TYPE_MAX, brightnessLowerLimit, brightnessUpperLimit);
-
-	DEBUG_PARAMETER("Limited", endBrightness);
+	DEBUG_PARAMETER("Limited", finalBrightness);
 
 	if (getGammaCorrectionEnabled() == true) {
 		finalBrightness = gammaCorrectionLookupTable[finalBrightness];
 	}
 
-	DEBUG_PARAMETER("Corrected", endBrightness);
+	DEBUG_PARAMETER("Corrected", finalBrightness);
 
 	return finalBrightness;
 }

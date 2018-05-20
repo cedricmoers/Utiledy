@@ -328,10 +328,97 @@
 
 
 
+class LowPassFilter {
+
+public:
+
+	LowPassFilter() {
+		disable();
+		setSmoothing(0.9);
+		setValue(0);
+	}
+
+	float update(float value) {
+
+		float newValue;
+
+		if (isEnabled()) {
+			newValue = (getSmoothing() * getValue()) + ((1.0 - getSmoothing()) * value);
+		}
+		else {
+			newValue = value;
+		}
+
+		setValue(newValue);
+
+		return newValue;
+
+	}
+
+	char * getID() { return "Filter"; }
+
+
+	void enable() { setState(true); }
+	void disable() { setState(false); }
+	void setState(bool state) { this->state = state; }
+
+	bool isEnabled() { return this->state; }
+	bool isDisabled() { return !(this->state); }
+	bool getState() { return this->state; }
+
+	void setSmoothing(float value)
+	{
+		DEBUG_PRINT_HEADER();
+		DEBUG_PRINT_F("Setting low pass filter state to: ");
+		DEBUG_PRINT(value);
+		DEBUG_PRINTLN_F(".");
+
+		if (value >= 1.0) {
+			DEBUG_PRINT_HEADER();
+			DEBUG_PRINT_F("ERR: The smoothing factor needs to be smaller than 1.0. Setting it to 0.999999");
+			DEBUG_PRINTLN_F(".");
+
+			this->smoothing = 0.999999;
+		}
+		else if (value < 0.0) {
+			DEBUG_PRINT_HEADER();
+			DEBUG_PRINT_F("ERR: The smoothing factor needs to be greater than or equal to 0. Setting it to 0.");
+			DEBUG_PRINTLN_F(".");
+
+			this->smoothing = 0;
+		}
+		else {
+			this->smoothing = value;
+		}
+	}
+
+	float getSmoothing() { return this->smoothing; }
+
+	float getValue() { return this->value; }
+
+private:
+
+	bool state;
+
+	float smoothing;
+
+	float value;
+
+	float setValue(float value) { this->value = value; }
+
+};
+
+
+
+
 
 class GammaLED {
 
 public:
+
+	//Objects
+
+	LowPassFilter filter;
 
 	// Constructors
 
@@ -346,8 +433,6 @@ public:
 	void setID(char* identificator);								// Sets the ID of the LED for logging purposes.
 	void setPin(uint8_t ledPin);									// Sets the output pin to a new value.
 	void setGammaCorrectionEnabled(bool state);						// Sets the gamma correction to on/off.
-	void setLowPassFilterEnabled(bool state);						// Sets the state of the low pass filter.
-	void setLowPassFilterSmoothing(float smoothing);				// Sets the smoothing factor of the low pass filter. Must be between 0 and 1.
 	void setOutputLowerLimit(BRIGHTNESS_TYPE lowerLimit);			// Sets the lower limit of the MultiLED.
 	void setOutputUpperLimit(BRIGHTNESS_TYPE upperLimit);			// Sets the upper limit of the MultiLED.
 	virtual void setUnscaledBrightness(BRIGHTNESS_TYPE brightness);	// Sets the brightness to a certain value.
@@ -363,8 +448,6 @@ public:
 
 	uint8_t			getPin();										// Returns the output pin number.
 	bool			getGammaCorrectionEnabled();					// Returns the state of the gamma correction.
-	bool			getLowPassFilterEnabled();						// Returns the state of the low pass filter.
-	float			getLowPassFilterSmoothing();					// Returns the smoothing factor of the low pass filter.
 	char *			getID();										// Returns the identificator of the led.
 																	   
 	bool			isShining();									// Indicates if the LED is either fully on or dimmed.
@@ -377,8 +460,6 @@ public:
 
 	BRIGHTNESS_TYPE update();
 
-	BRIGHTNESS_TYPE update(BRIGHTNESS_TYPE unscaledValue);
-
 	void increaseBrightness(BRIGHTNESS_TYPE amount);				// Increase the current brightness by the given amount.
 	void decreaseBrightness(BRIGHTNESS_TYPE amount);				// Decrease the current brightness by the given amount.
 																	   
@@ -387,10 +468,14 @@ public:
 
 	BRIGHTNESS_TYPE unscaledToFinalBrightness(BRIGHTNESS_TYPE unscaledBrightness);
 
+
+
+
+
+
 private:
 
 	// Fields
-
 	char *			ID = "Led";
 	uint8_t			pin;
 
@@ -398,18 +483,11 @@ private:
 	BRIGHTNESS_TYPE brightnessUpperLimit;
 
 	BRIGHTNESS_TYPE unscaledBrightness = 0;
-	BRIGHTNESS_TYPE previousUnscaledBrightness = 0;
-
-	float previousEndBrightness = 0;
 
 	bool			gammaCorrectionEnabled;
-	bool			lowPassFilterEnabled;
-
-	float			lowPassFilterSmoothing;
 
 	bool			enabled = true;
 };
-
 
 
 
