@@ -184,11 +184,12 @@ BRIGHTNESS_TYPE Fader::update() {
 
 				setBrightness(getCurrentFadeEndBrightness());
 
+				onFadeValueReached();
+
 				setFadeMode(FADEMODE_IDLE);
 
 				if (isFadeWaving()) {
 					fadeToMin(getMinToMaxTime());
-					setFadeWavesLeft(getFadeWavesLeft() - 1);
 				}
 			}
 			else {
@@ -208,10 +209,22 @@ BRIGHTNESS_TYPE Fader::update() {
 
 				setBrightness(getCurrentFadeEndBrightness());
 
+				onFadeValueReached();
+
 				setFadeMode(FADEMODE_IDLE);
 
 				if (isFadeWaving()) {
-					fadeToMax(getMinToMaxTime());
+					
+					if (getFadeWavesLeft() > 0) {
+						setFadeWavesLeft(getFadeWavesLeft() - 1);
+					}
+
+					if (isFadeWaving()) {
+						fadeToMax(getMinToMaxTime());
+					}
+					else {
+						onFadeWavingComplete();
+					}
 				}
 			}
 			else {

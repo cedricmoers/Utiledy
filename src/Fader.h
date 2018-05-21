@@ -28,8 +28,6 @@ public:
 		BRIGHTNESS_TYPE lowerLimit = BRIGHTNESS_TYPE_MIN,
 		BRIGHTNESS_TYPE upperLimit = BRIGHTNESS_TYPE_MAX);
 
-
-
 	// Functions
 	BRIGHTNESS_TYPE update() override;
 
@@ -55,6 +53,9 @@ public:
 	void setCurrentFadeStartBrightness(BRIGHTNESS_TYPE brightness);
 	void setCurrentFadeStartTime(unsigned long time);
 
+	void setFadeValueReachedCallback(void(*callback)()) { this->fadeValueReachedCallback = callback; }
+	void setFadeWavingCompleteCallback(void(*callback)()) { this->fadeWavingCompleteCallback = callback; };
+
 	BRIGHTNESS_TYPE getCurrentFadeEndBrightness();
 	BRIGHTNESS_TYPE getCurrentFadeStartBrightness();
 	unsigned long getCurrentFadeStartTime();
@@ -66,6 +67,23 @@ public:
 	unsigned long getMinToMaxTime();
 
 private:
+
+	// Function pointers
+
+	void(*fadeValueReachedCallback)();
+	void(*fadeWavingCompleteCallback)();
+
+	void onFadeValueReached() {
+		if (fadeValueReachedCallback != nullptr) {
+			fadeValueReachedCallback();
+		}
+	}
+
+	void onFadeWavingComplete() {
+		if (fadeWavingCompleteCallback != nullptr) {
+			fadeWavingCompleteCallback();
+		}
+	}
 
 	// Fields
 
