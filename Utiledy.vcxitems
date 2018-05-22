@@ -20,8 +20,11 @@
   <ItemGroup>
     <!-- <ClInclude Include="$(MSBuildThisFileDirectory)Utiledy.h" /> -->
     <ClInclude Include="$(MSBuildThisFileDirectory)src\Blinker.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\Debug.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\Fader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\GammaLED.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\GammaTables.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\LowPassFilter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\Sparkler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\UltiLED.h" />
   </ItemGroup>

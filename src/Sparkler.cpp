@@ -27,7 +27,7 @@ unsigned long Sparkler::getSparkInterval()
 	return this->sparkInterval;
 }
 
-inline void Sparkler::setIntensity(BRIGHTNESS_TYPE value)
+void Sparkler::setIntensity(BRIGHTNESS_TYPE value)
 {
 	BRIGHTNESS_TYPE intensityMin = 0;
 	BRIGHTNESS_TYPE intensityMax = BRIGHTNESS_TYPE_MAX / 2;
