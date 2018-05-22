@@ -8,7 +8,10 @@
  Author:	Cedric
 */
 
-Sparkler led1 = Sparkler("LED1", 5, true, 0, 1023);
+Sparkler led1 = Sparkler("LED1", 5, GAMMACORRECTION_ON, BRIGHTNESS_TYPE_MIN, BRIGHTNESS_TYPE_MAX);
+Sparkler led2 = Sparkler("LED2", 4, GAMMACORRECTION_ON, BRIGHTNESS_TYPE_MIN, BRIGHTNESS_TYPE_MAX);
+Sparkler led3 = Sparkler("LED3", 0, GAMMACORRECTION_ON, BRIGHTNESS_TYPE_MIN, BRIGHTNESS_TYPE_MAX);
+Sparkler led4 = Sparkler("LED4", 2, GAMMACORRECTION_ON, BRIGHTNESS_TYPE_MIN, BRIGHTNESS_TYPE_MAX);
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -17,24 +20,36 @@ void setup() {
 
 	analogWriteRange(BRIGHTNESS_TYPE_MAX);
 
-	led1.enable();
-
-	led1.setIntensity(500);
-
+	led1.setBrightness(3000);
+	led1.setIntensity(1000);
 	led1.setSparkInterval(20);
 
-	led1.setLowPassFilterEnabled(true);
+	led1.filter.enable();
+	led1.filter.setSmoothing(0.999);
 
-	led1.setLowPassFilterSmoothing(0.9);
+	led2.setBrightness(3000);
+	led2.setIntensity(1000);
+	led2.setSparkInterval(250);
 
-	led1.fadeWave(5000, 0);
+	led2.filter.enable();
+	led2.filter.setSmoothing(0.999);
+
+	led3.setBrightness(2000);
+	led3.setIntensity(2000);
+	led3.setSparkInterval(20);
+
+	led4.setBrightness(2000);
+	led4.setIntensity(2000);
+	led4.setSparkInterval(250);
+
 }
 
 // the loop function runs over and over again until power down or reset
 void loop() {
   
-	analogWrite(led1.getPin(), led1.update());
-
-	delay(5);
+	led1.updateAndWrite();
+	led2.updateAndWrite();
+	led3.updateAndWrite();
+	led4.updateAndWrite();
 
 }

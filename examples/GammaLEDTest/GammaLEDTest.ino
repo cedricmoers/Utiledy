@@ -26,17 +26,10 @@ void setup()
 {
 	Serial.begin(921600);
 
-	delay(2000);
-	 
-	led1.enable();
-	led2.enable();
-	led3.enable();
-	led4.enable();
-
-	led1.setUnscaledBrightness(0);
-	led2.setUnscaledBrightness(0);
-	led3.setUnscaledBrightness(0);
-	led4.setUnscaledBrightness(0);
+	led1.setBrightness(0);
+	led2.setBrightness(0);
+	led3.setBrightness(0);
+	led4.setBrightness(0);
 }
 
 void loop()
