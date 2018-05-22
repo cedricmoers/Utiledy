@@ -1,5 +1,4 @@
-# Utiledy
-
+![Logo](extras/Graphics/UtiledyLogo.png)
 ## Introduction
 
 A general purpose class library for use with LEDs.
