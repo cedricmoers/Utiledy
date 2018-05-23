@@ -52,7 +52,7 @@
 #endif
 
 
-#define ENABLE_DEBUG //Comment out to disable debug to serial monitor.
+// #define ENABLE_DEBUG //Comment out to disable debug to serial monitor.
 
 
 
