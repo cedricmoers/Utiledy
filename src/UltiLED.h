@@ -42,8 +42,8 @@ public:
 	void setToSpark(BRIGHTNESS_TYPE intensity);
 	void setToSpark();
 
-	void setToBlink(BRIGHTNESS_TYPE highBrightness, BRIGHTNESS_TYPE lowBrightness, unsigned long highTime, unsigned long lowTime);
-	void setToBlink(unsigned long highTime, unsigned long lowTime);
+	void setToBlink(BRIGHTNESS_TYPE highBrightness, BRIGHTNESS_TYPE lowBrightness, unsigned long highTime, unsigned long lowTime, unsigned long offset = 0);
+	void setToBlink(unsigned long highTime, unsigned long lowTime, unsigned long offset);
 	void setToBlink(BRIGHTNESS_TYPE highBrightness, BRIGHTNESS_TYPE lowBrightness);
 	void setToBlink();
 
