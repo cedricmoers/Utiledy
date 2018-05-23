@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
+  <Class Name="Blinker" Collapsed="true">
+    <Position X="0.5" Y="5.25" Width="1.5" />
+    <InheritanceLine Type="Fader">
+      <InheritanceModifierLabel ManuallyPlaced="true">
+        <Position X="-0.752" Y="0.443" />
+      </InheritanceModifierLabel>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>IACAAEAmKACAACDgACIBAAAABAAhGICmADEKJIEEKAo=</HashCode>
+      <FileName>src\Blinker.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Fader" Collapsed="true">
+    <Position X="1.75" Y="3.75" Width="1.5" />
+    <InheritanceLine Type="GammaLED">
+      <InheritanceModifierLabel ManuallyPlaced="true">
+        <Position X="0.131" Y="0.06" />
+      </InheritanceModifierLabel>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>EAABMAEAAcAABAECBIoRAAAAgCIMAgAIAkiAhBRGAAE=</HashCode>
+      <FileName>src\Fader.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GammaLED" Collapsed="true">
+    <Position X="1.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>KoCgiAAgIAAggQqIgACAEAAoAAAIGIAAAQARIAAkKAA=</HashCode>
+      <FileName>src\GammaLED.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="filter" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="LowPassFilter" Collapsed="true">
+    <Position X="1.75" Y="1" Width="1.5" />
+    <Members>
+      <Field Name="smoothing" Hidden="true" />
+      <Field Name="state" Hidden="true" />
+      <Field Name="value" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAgSCIAAYAAAAAAAAAACAEAARBAAAEIAQ=</HashCode>
+      <FileName>src\LowPassFilter.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sparkler" Collapsed="true">
+    <Position X="2.75" Y="5.25" Width="1.5" />
+    <InheritanceLine Type="Fader">
+      <InheritanceModifierLabel ManuallyPlaced="true">
+        <Position X="-0.067" Y="0.435" />
+      </InheritanceModifierLabel>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>IAAQAAEggQAAAAABEAAAAAAAEAAACIAAAAAAAAAEASA=</HashCode>
+      <FileName>src\Sparkler.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UltiLED" Collapsed="true">
+    <Position X="1.75" Y="6.75" Width="1.5" />
+    <InheritanceLine Type="Blinker">
+      <InheritanceModifierLabel ManuallyPlaced="true">
+        <Position X="0.758" Y="0.464" />
+      </InheritanceModifierLabel>
+    </InheritanceLine>
+    <InheritanceLine Type="Sparkler">
+      <InheritanceModifierLabel ManuallyPlaced="true">
+        <Position X="-0.921" Y="0.456" />
+      </InheritanceModifierLabel>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>KAAAAAAgAAAAACCAAAIAAAAAAAAACICAAAAAAAAEAAA=</HashCode>
+      <FileName>src\UltiLED.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
