@@ -149,3 +149,9 @@ led3.filter.setSmoothing(0.999);
 
 led4.setBrightness(BRIGHTNESS_TYPE_MAX);
 ```
+
+## Class Diagram
+Below diagram is an overview of the available classes and their relation from one to another.
+
+![ClassDiagram](extras/Graphics/ClassDiagram.png)
+
