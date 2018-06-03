@@ -1,4 +1,6 @@
 // #define BRIGHTNESS_RES_12BIT
+#define BRIGHTNESS_RES_10BIT;
+#define ENABLE_DEBUG;
 
 #include <Blinker.h>
 
@@ -13,8 +15,17 @@ void setup()
 	// Start serial communication.
 	Serial.begin(921600);
 
+	Serial.println(BRIGHTNESS_TYPE_MAX);
+
 	// Set the pwm range of the board.
-	analogWriteRange(BRIGHTNESS_TYPE_MAX);
+	analogWriteRange(4095);
+
+	Serial.println(sizeof(gammaCorrectionLookupTable) / sizeof(BRIGHTNESS_TYPE));
+
+	led1.enableDebug();
+	led2.enableDebug();
+	led3.enableDebug();
+	led4.enableDebug();
 
 	// Set the high brightness of all the leds.
 	led1.setHighBrightness(2000);

@@ -23,7 +23,7 @@
 	#define GAMMACORRECTION_OFF		false			//Gammacorrection disabled
 
 	//Set for which resolution the library needs to be compiled.
-	#define BRIGHTNESS_RES_12BIT
+	//#define BRIGHTNESS_RES_12BIT
 	//#define BRIGHTNESS_RES_10BIT
 	//#define BRIGHTNESS_RES_8BIT
 
@@ -39,17 +39,17 @@
 		#define BRIGHTNESS_TYPE uint8_t 
 		#define BRIGHTNESS_TYPE_MAX 255
 		#define BRIGHTNESS_TYPE_MIN 0
-	//#else  //Default = 8 bit
-	//	#define BRIGHTNESS_TYPE uint8_t 
-	//	#define BRIGHTNESS_TYPE_MAX 255
-	//	#define BRIGHTNESS_TYPE_MIN 0
+	#else
+		#define BRIGHTNESS_TYPE uint16_t 
+		#define BRIGHTNESS_TYPE_MAX 4095
+		#define BRIGHTNESS_TYPE_MIN 0
 	#endif
 
 	#include "GammaTables.h"
 	#include "Debug.h"
 	#include "LowPassFilter.h"
 
-#endif
+
 
 
 // #define ENABLE_DEBUG //Comment out to disable debug to serial monitor.
@@ -112,8 +112,8 @@ public:
 	void enable();													// Enable the LED output.
 	void disable();													// Disable the LED output.
 
-	void enableDebug() { this->debug = true; filter.enableDebug(); DEBUG_PRINTLN_F("Enabled Debug."); }
-	void disableDebug() { this->debug = false; filter.disableDebug(); DEBUG_PRINTLN_F("Disabled Debug."); }
+	void enableDebug() { this->debug = true; filter.enableDebug(); DEBUG_PRINTLN_F_HEADER("Enabled Debug."); }
+	void disableDebug() { this->debug = false; filter.disableDebug(); DEBUG_PRINTLN_F_HEADER("Disabled Debug."); }
 
 	bool isDebugEnabled() { return this->debug; }
 
@@ -137,5 +137,8 @@ private:
 	bool			enabled;
 };
 
+
+
+#endif
 
 

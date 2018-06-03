@@ -73,16 +73,14 @@ public:
 	// Sets the smoothing factor of the filter. Valid values: 0 <= value < 1
 	void setSmoothing(float value)
 	{
-		DEBUG_PRINT_HEADER();
-		DEBUG_PRINT_F("Setting smoothing factor to: ");
+		DEBUG_PRINT_F_HEADER("Setting smoothing factor to: ");
 		DEBUG_PRINT(value);
 		DEBUG_PRINTLN_F(".");
 
 		if (value >= 1.0) {
 
 			// If the value is greater than or equal to 1, set the value to 0.999999.
-			DEBUG_PRINT_HEADER();
-			DEBUG_PRINTLN_F("ERR: The smoothing factor needs to be smaller than 1.0. Setting it to 0.999999");
+			DEBUG_PRINTLN_F_HEADER("ERR: The smoothing factor needs to be smaller than 1.0. Setting it to 0.999999");
 
 			this->smoothing = 0.999999;
 
@@ -90,8 +88,7 @@ public:
 		else if (value < 0.0) {
 
 			// If the value is smaller than 0, set the value to 0.
-			DEBUG_PRINT_HEADER();
-			DEBUG_PRINTLN_F("ERR: The smoothing factor needs to be greater than or equal to 0. Setting it to 0.");
+			DEBUG_PRINTLN_F_HEADER("ERR: The smoothing factor needs to be greater than or equal to 0. Setting it to 0.");
 
 			this->smoothing = 0;
 

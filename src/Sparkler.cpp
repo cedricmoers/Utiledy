@@ -33,13 +33,13 @@ void Sparkler::setIntensity(BRIGHTNESS_TYPE value)
 	BRIGHTNESS_TYPE intensityMax = BRIGHTNESS_TYPE_MAX / 2;
 
 	if (value <= intensityMin) {
-		DEBUG_PRINT_HEADER();
+		DEBUG_HEADER();
 		DEBUG_PRINTLN_F("Spark intensity of zero will have no effect, writing the value anyway, but constant mode would be better in this case.");
 
 		this->intensity = intensityMin;
 	}
 	else if (value > intensityMax) {
-		DEBUG_PRINT_HEADER();
+		DEBUG_HEADER();
 		DEBUG_PRINT_F("Spark intensity should not exceed a value of: ");
 		DEBUG_PRINT(intensityMax);
 		DEBUG_PRINTLN_F(". Changing to that.");
@@ -47,7 +47,7 @@ void Sparkler::setIntensity(BRIGHTNESS_TYPE value)
 		this->intensity = intensityMax;
 	}
 	else {
-		DEBUG_PRINT_HEADER();
+		DEBUG_HEADER();
 		DEBUG_PRINT_F("Setting spark intensity to: ");
 		DEBUG_PRINT(value);
 		DEBUG_PRINTLN_F(".");
@@ -64,7 +64,7 @@ void Sparkler::setIntensity(BRIGHTNESS_TYPE value)
 
 void Sparkler::setSparkInterval(unsigned long updateInterval)
 {
-	DEBUG_PRINT_HEADER();
+	DEBUG_HEADER();
 	DEBUG_PRINT_F("Setting spark update interval to: ");
 	DEBUG_PRINT(updateInterval);
 	DEBUG_PRINTLN_F(" ms.");
@@ -80,14 +80,14 @@ void Sparkler::setSparkedBrightness(BRIGHTNESS_TYPE value)
 void Sparkler::setBrightness(BRIGHTNESS_TYPE value)
 {
 	if (value < getMinBrightness()) {
-		DEBUG_PRINT_HEADER();
+		DEBUG_HEADER();
 		DEBUG_PRINT_F("The given brightness with the current intensity will result in a brightness below zero. Changing the brightness to ");
 		DEBUG_PRINT(getIntensity());
 		DEBUG_PRINTLN_F(" to prevent this.");
 		GammaLED::setBrightness(getMinBrightness());
 	}
 	else if (value > getMaxBrightness()) {
-		DEBUG_PRINT_HEADER();
+		DEBUG_HEADER();
 		DEBUG_PRINT_F("The given brightness with the intensity will result in a brightness above BRIGHTNESS_TYPE_MAX. Changing the brightness to ");
 		DEBUG_PRINT(BRIGHTNESS_TYPE_MAX - getIntensity());
 		DEBUG_PRINTLN_F(" to prevent this.");

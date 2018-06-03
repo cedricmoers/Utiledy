@@ -5,11 +5,8 @@
 #ifndef _BLINKER_h
 #define _BLINKER_h
 
-#ifndef _FADER_h
 #include "Fader.h"
-#endif
 
-#endif
 
 
 
@@ -101,3 +98,5 @@ private :
 	unsigned long previousToggleTimestamp;
 
 };
+
+#endif

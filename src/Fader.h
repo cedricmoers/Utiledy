@@ -8,13 +8,7 @@
 #define FADEMODE_DOWN 2
 #define FADEMODE_IDLE 0
 
-#ifndef _GAMMALED_h
 #include "GammaLED.h"
-#endif
-
-#endif
-
-
 
 
 class Fader : public GammaLED
@@ -100,3 +94,5 @@ private:
 	unsigned long currentFadeStartTime;
 	unsigned long minToMaxTime;
 };
+
+#endif

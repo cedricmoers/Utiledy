@@ -117,6 +117,7 @@
   <ItemGroup>
     <ClInclude Include="C:\Users\Cedric\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\2.3.0\cores\esp8266\Arduino.h" />
     <ClInclude Include="src\Blinker.h" />
+    <ClInclude Include="src\Config.h" />
     <ClInclude Include="src\Debug.h" />
     <ClInclude Include="src\Fader.h" />
     <ClInclude Include="src\GammaLED.h" />

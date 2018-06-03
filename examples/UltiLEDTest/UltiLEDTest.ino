@@ -17,6 +17,11 @@ void setup() {
 
 	Serial.begin(921600);
 
+	pinMode(led1.getPin(),OUTPUT);
+	pinMode(led2.getPin(),OUTPUT);
+	pinMode(led3.getPin(),OUTPUT);
+	pinMode(led4.getPin(),OUTPUT);
+
 	analogWriteRange(BRIGHTNESS_TYPE_MAX);
 
 	led1.fadeWave(5000, 0);

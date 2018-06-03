@@ -25,7 +25,7 @@ Fader::Fader(
 
 void Fader::fadeToValue(uint16_t time, BRIGHTNESS_TYPE brightness) {
 
-	DEBUG_PRINT_HEADER();
+	DEBUG_HEADER();
 	DEBUG_PRINT_F("Fading to value: ");
 	DEBUG_PRINT(brightness);
 	DEBUG_PRINT_F(" within: ");
@@ -33,7 +33,7 @@ void Fader::fadeToValue(uint16_t time, BRIGHTNESS_TYPE brightness) {
 	DEBUG_PRINTLN_F("ms.");
 
 	if (brightness == GammaLED::getBrightness()) {
-		DEBUG_PRINT_HEADER();
+		DEBUG_HEADER();
 		DEBUG_PRINT_F("Brightness is already at that value.");
 
 		setFadeMode(FADEMODE_IDLE);
@@ -89,7 +89,7 @@ bool Fader::isFadeInProgress() {
 
 void Fader::fadeWave(uint16_t minToMaxTime, uint16_t numberOfTimes /*= 0*/) {
 
-	DEBUG_PRINT_HEADER();
+	DEBUG_HEADER();
 	DEBUG_PRINT_F("Starting to wave "); 
 	if (numberOfTimes == 0) {
 		DEBUG_PRINT_F("continuously,");
@@ -137,7 +137,7 @@ bool Fader::isContinuouslyFadeWaving() {
 
 void Fader::setContinuouslyFadeWaving(bool state)
 {
-	DEBUG_PRINT_HEADER();
+	DEBUG_HEADER();
 	DEBUG_PRINT_F("Setting continuously fade waving to: ");
 	DEBUG_PRINT(state ? "true" : "false");
 	DEBUG_PRINTLN_F(".");
@@ -172,7 +172,7 @@ BRIGHTNESS_TYPE Fader::update() {
 			long newBrightness = (long)getCurrentFadeStartBrightness() + (long)units;
 
 			if (newBrightness >= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime() || newBrightness >= (long)getMaxBrightness()) {
-				DEBUG_PRINT_HEADER();
+				DEBUG_HEADER();
 				DEBUG_PRINT_F("Desired brightness reached by increasing, ");
 				DEBUG_PRINTLN_F(".");
 
@@ -197,7 +197,7 @@ BRIGHTNESS_TYPE Fader::update() {
 			long newBrightness = (long)getCurrentFadeStartBrightness() - (long)units;
 
 			if (newBrightness <= (long)getCurrentFadeEndBrightness() || elapsed >= getMinToMaxTime() || newBrightness <= (long)getMinBrightness()) {
-				DEBUG_PRINT_HEADER();
+				DEBUG_HEADER();
 				DEBUG_PRINT_F("Desired brightness reached by decreasing, ");
 				DEBUG_PRINTLN_F(".");
 
@@ -236,7 +236,7 @@ BRIGHTNESS_TYPE Fader::update() {
 
 void Fader::setCurrentFadeEndBrightness(BRIGHTNESS_TYPE brightness)
 {
-	DEBUG_PRINT_HEADER();
+	DEBUG_HEADER();
 	DEBUG_PRINT_F("Setting fade end brightness to: ");
 	DEBUG_PRINT(brightness);
 	DEBUG_PRINTLN_F(".");
@@ -246,7 +246,7 @@ void Fader::setCurrentFadeEndBrightness(BRIGHTNESS_TYPE brightness)
 
 void Fader::setCurrentFadeStartBrightness(BRIGHTNESS_TYPE brightness)
 {
-	DEBUG_PRINT_HEADER();
+	DEBUG_HEADER();
 	DEBUG_PRINT_F("Setting fade start brightness to: ");
 	DEBUG_PRINT(brightness);
 	DEBUG_PRINTLN_F(".");
@@ -256,7 +256,7 @@ void Fader::setCurrentFadeStartBrightness(BRIGHTNESS_TYPE brightness)
 
 void Fader::setCurrentFadeStartTime(unsigned long time)
 {
-	DEBUG_PRINT_HEADER();
+	DEBUG_HEADER();
 	DEBUG_PRINT_F("Setting fade start time to: ");
 	DEBUG_PRINT(time);
 	DEBUG_PRINTLN_F(".");
@@ -281,7 +281,7 @@ unsigned long Fader::getCurrentFadeStartTime()
 
 void Fader::setFadeWavesLeft(uint16_t numberOfWaves)
 {
-	DEBUG_PRINT_HEADER();
+	DEBUG_HEADER();
 	DEBUG_PRINT_F("Setting remaining fade waves to: ");
 	DEBUG_PRINT(numberOfWaves);
 	DEBUG_PRINTLN_F(".");
@@ -301,7 +301,7 @@ uint8_t Fader::getFadeMode()
 
 void Fader::setMinToMaxTime(unsigned long value)
 {
-	DEBUG_PRINT_HEADER();
+	DEBUG_HEADER();
 	DEBUG_PRINT_F("Setting min to max time to: ");
 	DEBUG_PRINT(value);
 	DEBUG_PRINTLN_F(".");

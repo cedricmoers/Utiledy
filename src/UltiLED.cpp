@@ -147,7 +147,7 @@ void UltiLED::setToBlink()
 
 void UltiLED::setMode(uint8_t value)
 {
-	DEBUG_PRINT_HEADER();
+	DEBUG_HEADER();
 	DEBUG_PRINT_F("Setting Ultiled mode to: ");
 	DEBUG_PRINTLN(value);
 
