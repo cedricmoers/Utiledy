@@ -1,8 +1,7 @@
 // #define BRIGHTNESS_RES_12BIT
-#define BRIGHTNESS_RES_10BIT;
-#define ENABLE_DEBUG;
 
-#include <Blinker.h>
+
+#include <Config.h>
 
 // Create 4 blinkers.
 Blinker led1 = Blinker("LED1", 5, GAMMACORRECTION_ON, BRIGHTNESS_TYPE_MIN, BRIGHTNESS_TYPE_MAX);
@@ -23,9 +22,6 @@ void setup()
 	Serial.println(sizeof(gammaCorrectionLookupTable) / sizeof(BRIGHTNESS_TYPE));
 
 	led1.enableDebug();
-	led2.enableDebug();
-	led3.enableDebug();
-	led4.enableDebug();
 
 	// Set the high brightness of all the leds.
 	led1.setHighBrightness(2000);

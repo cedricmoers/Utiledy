@@ -1,5 +1,5 @@
 
-#include <GammaLED.h>
+#include <Config.h>
 
 GammaLED led1 = GammaLED("LED1", 5, true, 0, 1023);
 GammaLED led2 = GammaLED("LED2", 4, true, 0, 1023);
