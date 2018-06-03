@@ -38,7 +38,7 @@ void Sparkler::setIntensity(BRIGHTNESS_TYPE value)
 
 		this->intensity = intensityMin;
 	}
-	else if (value > intensityMax / 2) {
+	else if (value > intensityMax) {
 		DEBUG_PRINT_HEADER();
 		DEBUG_PRINT_F("Spark intensity should not exceed a value of: ");
 		DEBUG_PRINT(intensityMax);
@@ -56,7 +56,7 @@ void Sparkler::setIntensity(BRIGHTNESS_TYPE value)
 	}
 
 	// Update the brightness.
-	setBrightness(getBrightness());
+	setBrightness(GammaLED::getBrightness());
 
 	DEBUG_PARAMETER("Unscaled Min: ", getMinBrightness());
 	DEBUG_PARAMETER("Unscaled Max: ", getMaxBrightness());
@@ -120,22 +120,13 @@ BRIGHTNESS_TYPE Sparkler::getMaxBrightness()
 
 BRIGHTNESS_TYPE Sparkler::update()
 {
-	DEBUG_PRINT_HEADER();
-	DEBUG_PRINTLN_F("Updating sparkler");
 
 	unsigned long now = millis();
 	unsigned long elapsed = now - this->previousSparkTimestamp;
 
 	if (elapsed >= getSparkInterval()) {
 
-		DEBUG_PRINT_HEADER();
-		DEBUG_PRINT_F("Generating new spark::B:");
-		DEBUG_PRINT(getBrightness());
-
 		BRIGHTNESS_TYPE finalBrightness = (BRIGHTNESS_TYPE) ((long)GammaLED::getBrightness() + random(-(long)getIntensity(), (long)getIntensity()));
-
-		DEBUG_PRINT_F(", A:");
-		DEBUG_PRINTLN(finalBrightness);
 
 		setSparkedBrightness(finalBrightness);
 

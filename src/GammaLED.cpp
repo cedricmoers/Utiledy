@@ -268,13 +268,8 @@ bool GammaLED::isDisabled()
 
 BRIGHTNESS_TYPE GammaLED::update() {
 
-	DEBUG_PRINT_HEADER();
-	DEBUG_PRINTLN_F("Updating LED.");
-
 	return unscaledToFinalBrightness(getBrightness());
 
-	DEBUG_PRINT_HEADER();
-	DEBUG_PRINTLN_F("Done Updating LED.");
 }
 
 void GammaLED::updateAndWrite()
@@ -334,25 +329,25 @@ void GammaLED::disable() {
 
 BRIGHTNESS_TYPE GammaLED::unscaledToFinalBrightness(BRIGHTNESS_TYPE unscaledBrightness)
 {
-	DEBUG_PRINT_HEADER();
-	DEBUG_PRINTLN_F("Calculating final brightness.");
-	DEBUG_PARAMETER("Input", unscaledBrightness);
+	// DEBUG_PRINT_HEADER();
+	// DEBUG_PRINTLN_F("Calculating final brightness.");
+	// DEBUG_PARAMETER("Input", unscaledBrightness);
 
 	BRIGHTNESS_TYPE finalBrightness = unscaledBrightness;
 
 	finalBrightness =	this->filter.update((float)unscaledBrightness);
 
-	DEBUG_PARAMETER("Filtered", finalBrightness);
+	// DEBUG_PARAMETER("Filtered", finalBrightness);
 
 	finalBrightness = map((BRIGHTNESS_TYPE)round(finalBrightness), BRIGHTNESS_TYPE_MIN, BRIGHTNESS_TYPE_MAX, getOutputLowerLimit(), getOutputUpperLimit());
 
-	DEBUG_PARAMETER("Limited", finalBrightness);
+	// DEBUG_PARAMETER("Limited", finalBrightness);
 
 	if (isGammaCorrectionEnabled() == true) {
 		finalBrightness = gammaCorrectionLookupTable[finalBrightness];
 	}
 
-	DEBUG_PARAMETER("Corrected", finalBrightness);
+	// DEBUG_PARAMETER("Corrected", finalBrightness);
 
 	return finalBrightness;
 }

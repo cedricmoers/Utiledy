@@ -112,8 +112,14 @@ public:
 	void enable();													// Enable the LED output.
 	void disable();													// Disable the LED output.
 
+	void enableDebug() { this->debug = true; filter.enableDebug(); DEBUG_PRINTLN_F("Enabled Debug."); }
+	void disableDebug() { this->debug = false; filter.disableDebug(); DEBUG_PRINTLN_F("Disabled Debug."); }
+
+	bool isDebugEnabled() { return this->debug; }
 
 private:
+
+	bool debug = false;
 
 	BRIGHTNESS_TYPE unscaledToFinalBrightness(BRIGHTNESS_TYPE unscaledBrightness);
 

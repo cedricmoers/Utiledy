@@ -2,30 +2,35 @@
 
 #ifndef _DEBUG_h
 	#define _DEBUG_h
+
+	#define ENABLE_DEBUG
 	
 	#ifdef ENABLE_DEBUG
 	
 		#define DEBUG_PRINT_HEADER(...)		{									\
+												if(isDebugEnabled()) {			\
 												Serial.print(millis());			\
 												Serial.print("::");				\
 												Serial.print(getID());			\
-												Serial.print("::");				\
+												Serial.print("::");}			\
 											}
 		#define DEBUG_PRINTLN_HEADER(...)	{									\
+												if(isDebugEnabled()) {			\
 												DEBUG_PRINT_HEADER();			\
-												Serial.println(__VA_ARGS__);	\
+												Serial.println(__VA_ARGS__);}	\
 											}
 		#define DEBUG_PARAMETER(name, value){									\
+												if(isDebugEnabled()) {			\
 												DEBUG_PRINT_HEADER();			\
 												DEBUG_PRINT(name);				\
 												DEBUG_PRINT_F("::");			\
-												DEBUG_PRINTLN(value);			\
+												DEBUG_PRINTLN(value);}			\
 											}
 		
-		#define DEBUG_PRINT(...)				Serial.print(__VA_ARGS__);
-		#define DEBUG_PRINT_F(...)				Serial.print(__VA_ARGS__);
-		#define DEBUG_PRINTLN(...)				Serial.println(__VA_ARGS__);
-		#define DEBUG_PRINTLN_F(...)			Serial.println(__VA_ARGS__);
+		#define DEBUG_PRINT(...)				if(isDebugEnabled()) {Serial.print(__VA_ARGS__);	}
+		#define DEBUG_PRINT_F(...)				if(isDebugEnabled()) {Serial.print(__VA_ARGS__);	}
+		#define DEBUG_PRINTLN(...)				if(isDebugEnabled()) {Serial.println(__VA_ARGS__);	}
+		#define DEBUG_PRINTLN_F(...)			if(isDebugEnabled()) {Serial.println(__VA_ARGS__);	}
 	
 	#else
 	

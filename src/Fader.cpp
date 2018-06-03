@@ -152,13 +152,7 @@ void Fader::setContinuouslyFadeWaving(bool state)
 
 BRIGHTNESS_TYPE Fader::update() {
 
-	DEBUG_PRINT_HEADER();
-	DEBUG_PRINTLN_F("Updating Fader");
-
 	if (isFadeInProgress()) {
-
-		DEBUG_PRINT_HEADER();
-		DEBUG_PRINTLN_F("Fade in progress");
 
 		unsigned long now = millis();
 		unsigned long elapsed = now - getCurrentFadeStartTime();
@@ -233,8 +227,7 @@ BRIGHTNESS_TYPE Fader::update() {
 		}
 	}
 	else {
-		DEBUG_PRINT_HEADER();
-		DEBUG_PRINTLN_F("Fade not in progress");
+
 	}
 
 	return this->GammaLED::update();
